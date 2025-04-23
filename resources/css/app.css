@@ -25,6 +25,7 @@ body.dark-mode main {
 main {
     padding: 20px;
     background-color: rgb(196, 196, 196);
+    margin-bottom: auto;
 }
 .container {
     display: flex;
@@ -253,6 +254,9 @@ input:checked + .slider:before {
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
+/*filtrēšana*/
+
 .filter-section {
     margin-bottom: 30px;
     background-color: #dcdcdc;
@@ -282,6 +286,9 @@ input:checked + .slider:before {
     border-radius: 5px;
 }
 
+
+
+/*media*/
 
 @media only screen and (max-width: 700px) {
     body {
