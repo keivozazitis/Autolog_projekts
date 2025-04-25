@@ -257,7 +257,7 @@ input:checked + .slider:before {
 
 /*filtrēšana*/
 
-.filter-section {
+.Auto-markas {
     margin-bottom: 30px;
     background-color: #dcdcdc;
     padding: 20px;
@@ -265,7 +265,7 @@ input:checked + .slider:before {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.filter-section h2 {
+.Auto-markas h2 {
     margin-top: 0;
 }
 
@@ -284,6 +284,30 @@ input:checked + .slider:before {
     padding: 10px;
     border: 1px solid #aaa;
     border-radius: 5px;
+}
+
+ /*cena no lidz filtresana*/
+
+.filter-row {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.filter-row .filter-group {
+    flex: 1;
+    min-width: 150px;
+}
+/*tilpums no lidz*/
+.filter-row {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.filter-row .filter-group {
+    flex: 1;
+    min-width: 150px;
 }
 
 
