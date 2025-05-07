@@ -1,4 +1,3 @@
-// Objektā saliek markas un to modeļus
 const carModels = {
     alfaromeo: ["Giulia", "Stelvio", "MiTo"],
     audi: ["A3", "A4", "A6"],

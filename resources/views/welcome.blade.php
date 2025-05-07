@@ -14,9 +14,10 @@
         <img src="autolog.png" alt="logo" width="150" height="120">
         <div class="header-text">
             <h1>Autolog</h1>
-            <a href="">SLUDINĀJUMI</a>
-            <a href="/registration">LOGIN</a>
-            <a href="/registration">REGISTRATION</a>
+            <a href="" class="header-nav-btn">SLUDINĀJUMI</a>
+            <a href="/addListing" class="header-nav-btn">IEVIETOT SLUDINĀJUMU</a>
+            <a href="/registration" class="header-nav-btn">LOGIN</a>
+            <a href="/registration" class="header-nav-btn">REGISTRATION</a>
         </div>
         <!--darkmode switch-->
         <div class="mode">
@@ -25,6 +26,7 @@
                 <span class="slider"></span>
             </label>
         </div>
+        <a href="/profile" class="header-nav-btn profile-btn">PROFILS</a>
     </header> 
     <main>
         <!--visas marku opcijas-->

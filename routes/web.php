@@ -17,3 +17,6 @@ Route::get('/profile', function () {
 Route::get('/registration', function () {
     return view('registration');
 });
+Route::get('/addListing', function () {
+    return view('addListing');
+});

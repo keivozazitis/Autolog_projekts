@@ -17,7 +17,7 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            return redirect()->intended('/dashboard'); // Change to your intended route
+            return redirect()->intended('/registration'); // Change to your intended route
         }
 
         return back()->withErrors(['email' => 'Invalid login credentials.']);
@@ -39,6 +39,6 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/dashboard'); // Adjust route as needed
+        return redirect('/registration'); // Adjust route as needed
     }
 }
