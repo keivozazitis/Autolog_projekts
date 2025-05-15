@@ -8,6 +8,34 @@
     @vite(['resources/css/app.css', 'resources/js/modelis.js', 'resources/js/addlisting.js'])
 </head>
 <body>
+    <header>
+        <!--headeris-->
+        <img src="autolog.png" alt="logo" width="150" height="120">
+        <div class="header-text">
+            <a href="/" style="text-decoration: none; color: inherit;">
+                <h1>Autolog</h1>
+            </a>
+            <a href="/sludinajumi" class="header-nav-btn">SLUDINĀJUMI</a>
+            <a href="/addListing" class="header-nav-btn">IEVIETOT SLUDINĀJUMU</a>
+            @if(!Auth::check())
+            <a href="/registration" class="header-nav-btn">LOGIN</a>
+            <a href="/registration" class="header-nav-btn">REGISTRATION</a>
+            @endif
+        </div>
+        <a href="/profile" class="header-nav-btn profile-btn">
+            @if(Auth::check())
+            {{ Auth::user()->name }}
+            @else
+            PROFILS
+            @endif
+        </a>
+        @if(Auth::check())
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="header-nav-btn" style="color: red;">Logout</button>
+        </form>
+        @endif
+    </header> 
     <section class="ievietot-sludinajumu">
         <form id="add-listing-form">
             <!-- Marka -->

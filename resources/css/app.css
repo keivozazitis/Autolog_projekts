@@ -10,49 +10,6 @@ body {
     flex-direction: column;
 }
 
-/* Dark mode stili */
-body.dark-mode {
-    background-color: #3a3a3a;
-    color: white;
-}
-
-body.dark-mode header {
-    background-color: #3a3a3a;
-}
-
-body.dark-mode main {
-    background-color: rgb(128, 128, 128);
-}
-
-body.dark-mode .header-nav-btn {
-    color: white;
-}
-
-body.dark-mode .header-text h1 {
-    color: white;
-}
-
-body.dark-mode aside {
-    background-color: #3a3a3a;
-}
-
-body.dark-mode footer {
-    background-color: #222;
-}
-
-body.dark-mode .stils {
-    background-color: #444;
-    color: white;
-}
-
-body.dark-mode .slider {
-    background-color: #ffffff;
-}
-
-body.dark-mode .slider:before {
-    background-color: #000000;
-}
-
 /* Header stili */
 header {
     background-color: rgb(150, 150, 150);
@@ -119,56 +76,6 @@ header img {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     text-decoration: none;
-}
-
-/* Dark mode pārslēgšanas stili */
-.mode {
-    margin-left: 20px;
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #000000;
-    transition: .4s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: rgb(255, 255, 255);
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: #e2e2e2;
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
 }
 
 /* Galvenā satura stili */
@@ -346,16 +253,16 @@ footer {
     flex: 1;
     min-width: 150px;
 }
-/*sludinajuma ievietosanas forms*/
-/* ===== Sludinājuma ievietošanas formas izkārtojums ===== */
+
+/* Sludinājuma ievietošanas forma */
 .ievietot-sludinajumu {
     margin: 40px auto;
     background: linear-gradient(to bottom right, #f9f9f9, #e6e6e6);
     padding: 30px 20px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    width: 100%;            /* aizpilda visu pieejamo platumu */
-    max-width: none;        /* izslēdz jebkādas maksimālās platuma ierobežošanas */
+    width: 100%;
+    max-width: none;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     box-sizing: border-box;
 }
@@ -367,18 +274,17 @@ footer {
     color: #333;
 }
 
-/* Horizontāla rinda ar visiem laukiem */
 .ievietot-sludinajumu .form-grid {
     display: flex;
     gap: 20px;
     align-items: flex-start;
-    justify-content: space-between; /* izplata laukus pa visu platumu */
-    flex-wrap: nowrap;              /* neļauj lauku sarindojumam uz leju */
+    justify-content: space-between;
+    flex-wrap: nowrap;
 }
 
 .ievietot-sludinajumu .filter-group {
-    flex: 1 1 0;       /* katrs lauks elastīgi paplašināsies vienmērīgi */
-    min-width: 150px;  /* neaizkustēsies zemāk par 150px */
+    flex: 1 1 0;
+    min-width: 150px;
     display: flex;
     flex-direction: column;
 }
@@ -408,7 +314,6 @@ footer {
     outline: none;
 }
 
-/* Poga beigās */
 .ievietot-sludinajumu button {
     flex: 0 0 auto;
     background-color: #0077cc;
@@ -419,15 +324,38 @@ footer {
     font-size: 1em;
     cursor: pointer;
     transition: background-color 0.2s;
-    align-self: flex-end;  /* novieto pogu uz lejas malas */
+    align-self: flex-end;
     margin-left: 20px;
 }
 
 .ievietot-sludinajumu button:hover {
     background-color: #005fa3;
 }
+.user-info {
+    width: 100vw;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ccc;
+    color: #333;
+    font-size: 18px;
+    text-align: center; /* centrē tekstu */
+}
 
+.user-info h3 {
+    margin-top: 0;
+    color: #0077cc;
+}
 
+.user-info p {
+    margin: 10px 0 0 0;
+}
+
+.user-info.not-logged-in {
+    background-color: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+}
 
 /* Responsīvie stili */
 @media only screen and (max-width: 700px) {
@@ -435,7 +363,7 @@ footer {
         display: flex;
         flex-direction: column;
     }
-    
+
     header {
         flex-direction: column;
         padding: 10px;
@@ -467,11 +395,6 @@ footer {
 
     .profile-btn {
         margin: 10px auto;
-    }
-
-    .mode {
-        margin: 15px auto;
-        padding: 0;
     }
 
     aside {
@@ -513,4 +436,5 @@ footer {
         width: 100%;
         left: 0;
     }
+    
 }

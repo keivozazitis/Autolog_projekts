@@ -1,12 +1,10 @@
+<!-- resources/views/auth.blade.php -->
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoLog</title>
-    <link rel="stylesheet" href="app.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    @vite(['resources/css/app.css','resources/js/toggle.js', 'public/autolog.png', 'resources/js/modelis.js'])
+    <title>Login / Register</title>
+    @vite(['resources/css/app.css', 'resources/js/modelis.js'])
 </head>
 <body>
     <header>
@@ -36,9 +34,8 @@
             <button type="submit" class="header-nav-btn" style="color: red;">Logout</button>
         </form>
         @endif
-
     </header> 
-    {{-- <main>
+    <main>
         <!--visas marku opcijas-->
         <section class="Auto-markas">
             <form id="filter-form">
@@ -181,6 +178,5 @@
         </section>
         
     </main>
-     --}}
 </body>
 </html>

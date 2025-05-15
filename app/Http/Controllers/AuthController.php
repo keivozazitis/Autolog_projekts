@@ -11,34 +11,47 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        // Validē ievadītos datus
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        if (Auth::attempt($credentials)) {
-            return redirect()->intended('/registration'); // Change to your intended route
+        // Mēģina autentificēt lietotāju ar sniegtajiem datiem
+        if (Auth::attempt($credentials, $request->filled('remember'))) {
+            // Pēc veiksmīgas ielogošanās - drošības nolūkos regenerē sesiju
+            $request->session()->regenerate();
+
+            // Novirza uz iecerēto lapu vai uz mājas lapu
+            return redirect()->intended('/');
         }
 
-        return back()->withErrors(['email' => 'Invalid login credentials.']);
+        // Ja neizdevās autentificēties, atgriež atpakaļ ar kļūdas ziņu
+        return back()->withErrors([
+            'email' => 'Nepareiza e-pasta adrese vai parole.',
+        ])->withInput($request->only('email'));
     }
 
     public function register(Request $request)
     {
+        // Validē reģistrācijas datus
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed'
         ]);
 
+        // Izveido jaunu lietotāju ar droši hashētu paroli
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
 
+        // Automātiski ielogojas jaunais lietotājs
         Auth::login($user);
 
-        return redirect('/registration'); // Adjust route as needed
+        // Novirza uz mājas lapu vai citu lapu pēc reģistrācijas
+        return redirect('/');
     }
 }
