@@ -15,7 +15,9 @@
                 <h1>Autolog</h1>
             </a>
             <a href="/sludinajumi" class="header-nav-btn">SLUDINĀJUMI</a>
+            @if(Auth::check())
             <a href="/addListing" class="header-nav-btn">IEVIETOT SLUDINĀJUMU</a>
+            @endif
             @if(!Auth::check())
             <a href="/registration" class="header-nav-btn">LOGIN</a>
             <a href="/registration" class="header-nav-btn">REGISTRATION</a>
@@ -175,6 +177,35 @@
         
                 <button type="submit" class="button">Rādīt</button>
             </form>
+        </section>
+        
+                <section class="listings">
+            @forelse ($listings as $listing)
+                <div class="listing">
+                    <h3>{{ $listing->brand }} {{ $listing->model }} ({{ $listing->year }})</h3>
+                    <p>Cena: €{{ number_format($listing->price, 2) }}</p>
+                    <p>Apraksts: {{ $listing->description }}</p>
+
+                    <div class="images">
+                        @foreach ($listing->images as $image)
+                            <img src="{{ asset($image->image_path) }}" alt="Sludinājuma bilde" style="max-width: 300px; height: auto;">
+                        @endforeach
+                    </div>
+                    
+    
+                        <form action="{{ route('listing.destroy', $listing->id) }}" method="POST" onsubmit="return confirm('Vai tiešām vēlies dzēst šo sludinājumu?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Dzēst sludinājumu</button>
+                        </form>
+                        <a href="{{ route('listing.show', $listing->id) }}">
+                        <button type="button" class="btn btn-primary">Apskatīt sludinājumu</button>
+                        </a>
+                </div>
+                <hr>
+            @empty
+                <p>Nav pieejamu sludinājumu.</p>
+            @endforelse
         </section>
         
     </main>

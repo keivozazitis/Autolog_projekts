@@ -43,40 +43,32 @@ const carModels = {
     vaz: ["2101", "2107", "Niva"]
 };
 
-// Dabū dropdowns
 const brandSelect = document.getElementById('brand');
 const modelSelect = document.getElementById('model');
 
-// Kad maina marku
-brandSelect.addEventListener('change', function() {
+brandSelect.addEventListener('change', function () {
     const selectedBrand = this.value;
-    
-    // Notīra modeļu dropdown
     modelSelect.innerHTML = '';
 
     if (selectedBrand && carModels[selectedBrand]) {
-        // Ja ir izvēlēta marka un tai ir modeļi
         modelSelect.disabled = false;
 
-        // Pievieno jaunu "Izvēlies modeli" opciju
-        const placeholderOption = document.createElement('option');
-        placeholderOption.value = '';
-        placeholderOption.textContent = 'Izvēlies modeli';
-        modelSelect.appendChild(placeholderOption);
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Izvēlies modeli';
+        modelSelect.appendChild(placeholder);
 
-        // Pievieno visus pieejamos modeļus
         carModels[selectedBrand].forEach(function(model) {
             const option = document.createElement('option');
-            option.value = model.toLowerCase();
+            option.value = model; // saglabā sākotnējo lielo burtu formu!
             option.textContent = model;
             modelSelect.appendChild(option);
         });
     } else {
-        // Ja nav izvēlēta marka vai nav modeļu, atkal disable
-        const placeholderOption = document.createElement('option');
-        placeholderOption.value = '';
-        placeholderOption.textContent = 'Vispirms izvēlies marku';
-        modelSelect.appendChild(placeholderOption);
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Vispirms izvēlies marku';
+        modelSelect.appendChild(placeholder);
         modelSelect.disabled = true;
     }
 });

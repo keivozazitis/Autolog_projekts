@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ListingController;
 
 
 // Autentifikācijas skats
@@ -31,6 +32,10 @@ Route::get('/sludinajumi', function () {
     return view('sludinajumi');
 });
 
+// Sludinājumu pievienošanas maršruts - saglabā dati no formas
+Route::post('/sludinajumi', [ListingController::class, 'store'])->name('listing.store');
+
+// Logout maršruts
 Route::post('/logout', function (Request $request) {
     Auth::logout();
     $request->session()->invalidate();
@@ -38,6 +43,10 @@ Route::post('/logout', function (Request $request) {
     return redirect('/');
 })->name('logout');
 
+// Lietotāja konta dzēšana (ar middleware, lai tikai autentificēti var dzēst)
 Route::delete('/account/delete', [UserController::class, 'destroy'])
     ->middleware('auth')
     ->name('account.delete');
+Route::get('/sludinajumi', [ListingController::class, 'index']);
+Route::delete('/addListing/{listing}', [ListingController::class, 'destroy'])->name('listing.destroy');
+Route::get('/listing/{id}', [ListingController::class, 'show'])->name('listing.show');

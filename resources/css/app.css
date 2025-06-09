@@ -257,7 +257,7 @@ footer {
 /* Sludinājuma ievietošanas forma */
 .ievietot-sludinajumu {
     margin: 40px auto;
-    background: linear-gradient(to bottom right, #f9f9f9, #e6e6e6);
+    background: linear-gradient(to bottom right, #c6c6c6, #c3c2c2);
     padding: 30px 20px;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -331,20 +331,22 @@ footer {
 .ievietot-sludinajumu button:hover {
     background-color: #005fa3;
 }
+
 .user-info {
     width: 100vw;
     padding: 40px 20px;
     box-sizing: border-box;
-    background-color: #ffffff;
-    border-bottom: 1px solid #ccc;
+    background: linear-gradient(to bottom right, #c6c6c6, #c3c2c2);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: rgb(137, 137, 137);
     color: #333;
     font-size: 18px;
-    text-align: center; /* centrē tekstu */
+    text-align: center;
 }
 
 .user-info h3 {
     margin-top: 0;
-    color: #0077cc;
+    color: #000000;
 }
 
 .user-info p {
@@ -436,5 +438,77 @@ footer {
         width: 100%;
         left: 0;
     }
-    
+}
+
+/* Jauns responsīvs CSS priekš listings sadaļas */
+.listings {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.listing {
+    background: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.listing h3 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.listing p {
+    font-size: 1rem;
+    color: #555;
+}
+
+.images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.images img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    flex: 1 1 150px; /* Minimum width 150px, but can grow */
+    object-fit: cover;
+}
+
+/* Mazāki ekrāni (mobīlie) */
+@media (max-width: 600px) {
+    .listing {
+        padding: 10px;
+    }
+
+    .listing h3 {
+        font-size: 1.2rem;
+    }
+
+    .listing p {
+        font-size: 0.9rem;
+    }
+
+    .images {
+        flex-direction: column;
+    }
+
+    .images img {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}
+
+/* Vidēji ekrāni (tabletes) */
+@media (min-width: 601px) and (max-width: 900px) {
+    .images img {
+        flex: 1 1 45%; /* 2 bildes rindā */
+    }
 }

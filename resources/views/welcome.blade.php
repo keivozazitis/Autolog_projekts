@@ -17,7 +17,9 @@
                 <h1>Autolog</h1>
             </a>
             <a href="/sludinajumi" class="header-nav-btn">SLUDINĀJUMI</a>
+            @if(Auth::check())
             <a href="/addListing" class="header-nav-btn">IEVIETOT SLUDINĀJUMU</a>
+            @endif
             @if(!Auth::check())
             <a href="/registration" class="header-nav-btn">LOGIN</a>
             <a href="/registration" class="header-nav-btn">REGISTRATION</a>

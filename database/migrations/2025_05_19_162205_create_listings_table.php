@@ -6,13 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('listings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable(); // Ja sludinājumu piesaisti lietotājam
             $table->string('brand');
-            $table->string('model')->nullable();
+            $table->string('model');
             $table->year('year');
             $table->decimal('price', 10, 2);
             $table->string('body_type')->nullable();
@@ -25,12 +27,15 @@ return new class extends Migration
             $table->string('vin')->nullable();
             $table->date('next_inspection')->nullable();
             $table->text('description')->nullable();
-            $table->unsignedTinyInteger('prev_inspection_rating')->nullable(); // 1–3
+            $table->tinyInteger('prev_inspection_rating')->nullable();
             $table->string('prev_inspection_problem')->nullable();
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('listings');

@@ -37,7 +37,14 @@
         @endif
     </header> 
     <section class="ievietot-sludinajumu">
-        <form id="add-listing-form">
+        <form action="{{ route('listing.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <!-- Attēlu augšupielāde -->
+            <div class="filter-group">
+                <label for="images">Pievienot bildes</label>
+                <input type="file" id="images" name="images[]" accept="image/*" multiple>
+                <div id="preview-container" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+            </div>
             <!-- Marka -->
             <div class="filter-group">
                 <label for="brand">Marka</label>
@@ -88,13 +95,14 @@
                     <option value="citas">Citas markas</option>
                 </select>
             </div>
-    
+            
             <!-- Modelis -->    
             <div class="filter-group">
                 <label for="model">Modelis</label>
-                <select id="model" name="model" disabled>
+                <select id="model" name="model" required>
                     <option value="">Vispirms izvēlies marku</option>
                 </select>
+                
             </div>
     
             <!-- Gads -->
@@ -218,6 +226,33 @@
         <button type="submit" class="button">Ievietot sludinājumu</button>
         </form>
     </section>
-    
+    <script>
+document.getElementById('images').addEventListener('change', function (event) {
+    const files = event.target.files;
+    const previewContainer = document.getElementById('preview-container');
+
+    previewContainer.innerHTML = ''; // Notīra vecos priekšskatījumus
+
+    Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.maxWidth = '150px';
+                img.style.maxHeight = '150px';
+                img.style.objectFit = 'cover';
+                img.style.border = '1px solid #ccc';
+                img.style.borderRadius = '8px';
+                previewContainer.appendChild(img);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+});
+</script>
+
 </body>
 </html>

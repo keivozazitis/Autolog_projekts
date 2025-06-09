@@ -14,7 +14,9 @@
                 <h1>Autolog</h1>
             </a>
             <a href="/sludinajumi" class="header-nav-btn">SLUDINĀJUMI</a>
+            @if(Auth::check())
             <a href="/addListing" class="header-nav-btn">IEVIETOT SLUDINĀJUMU</a>
+            @endif
             @if(!Auth::check())
             <a href="/registration" class="header-nav-btn">LOGIN</a>
             <a href="/registration" class="header-nav-btn">REGISTRATION</a>
@@ -45,6 +47,7 @@
             }
             .delete-btn {
                 background-color: #ff4d4f;
+                margin-top: 20px;
                 color: white;
                 border: none;
                 padding: 12px 24px;
@@ -72,5 +75,6 @@
         <p>Lūdzu, pieslēdzies, lai piekļūtu vairāk funkcijām.</p>
     </div>
     @endif
+
 </body>
 </html>
