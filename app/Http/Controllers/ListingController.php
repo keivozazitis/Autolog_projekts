@@ -113,11 +113,55 @@ class ListingController extends Controller
         return redirect('/sludinajumi')->with('success', 'Sludinājums veiksmīgi pievienots!');
     }
 
-    public function index()
-    {
-        $listings = Listing::with('images')->get();
-        return view('sludinajumi', compact('listings'));
+    public function index(Request $request)
+{
+    $query = Listing::with('images');
+
+    if ($request->filled('brand')) {
+        $query->where('brand', $request->brand);
     }
+
+    if ($request->filled('model')) {
+        $query->where('model', $request->model);
+    }
+
+    if ($request->filled('year')) {
+        $query->where('year', $request->year);
+    }
+
+    if ($request->filled('price-from')) {
+        $query->where('price', '>=', $request->input('price-from'));
+    }
+
+    if ($request->filled('price-to')) {
+        $query->where('price', '<=', $request->input('price-to'));
+    }
+
+    if ($request->filled('body-type')) {
+        $query->where('body_type', $request->input('body-type'));
+    }
+
+    if ($request->filled('fuel-type')) {
+        $query->where('fuel_type', $request->input('fuel-type'));
+    }
+
+    if ($request->filled('trans-type')) {
+        $query->where('transmission', $request->input('trans-type'));
+    }
+
+    if ($request->filled('engine-volume-from')) {
+        $query->where('engine_volume', '>=', $request->input('engine-volume-from'));
+    }
+
+    if ($request->filled('engine-volume-to')) {
+        $query->where('engine_volume', '<=', $request->input('engine-volume-to'));
+    }
+
+    $listings = $query->get();
+
+    return view('sludinajumi', compact('listings'));
+}
+
     public function show($id)
     {
         $listing = Listing::with('images')->findOrFail($id);

@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Autolog | Ievietot sludinajumu</title>
-    @vite(['resources/css/app.css', 'resources/js/modelis.js', 'resources/js/addlisting.js'])
+    <title>AutoLog</title>
+    <link rel="stylesheet" href="app.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    @vite(['resources/css/app.css','resources/js/toggle.js', 'public/autolog.png', 'resources/js/modelis.js'])
 </head>
 <body>
     <header>
@@ -16,7 +17,9 @@
                 <h1>Autolog</h1>
             </a>
             <a href="/sludinajumi" class="header-nav-btn">SLUDINĀJUMI</a>
+            @if(Auth::check())
             <a href="/addListing" class="header-nav-btn">IEVIETOT SLUDINĀJUMU</a>
+            @endif
             @if(Auth::check())
             <a href="/katalogs" class="header-nav-btn">PRIVĀTAIS KATALOGS</a>
             @endif
@@ -38,9 +41,13 @@
             <button type="submit" class="header-nav-btn" style="color: red;">Logout</button>
         </form>
         @endif
+
     </header> 
+    <h1 style="text-align: center;">Privātais katalogs</h1>
+
     <section class="ievietot-sludinajumu">
-        <form action="{{ route('listing.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('privatais.store') }}" method="POST" enctype="multipart/form-data">
+
             @csrf
             <!-- Attēlu augšupielāde -->
             <div class="filter-group">
@@ -207,56 +214,11 @@
                 <label for="description">Apraksts</label>
                 <textarea id="description" name="description" rows="3" placeholder="Papildus informācija..."></textarea>
             </div>
-
-            <!-- Iepriekšējās apskates vērtējums -->
-            <div class="filter-group">
-                <label for="prev_inspection_rating">Iepriekšējās apskates vērtējums</label>
-                <select id="prev_inspection_rating" name="prev_inspection_rating">
-                    <option value="">Izvēlies</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                </select>
-            </div>
-            <div class="filter-group" id="problem-group" style="display: none;">
-                <label for="prev_inspection_problem">Problēma</label>
-                <select id="prev_inspection_problem" name="prev_inspection_problem">
-                  <!-- Opcijas tiks pievienotas ar JS -->
-                </select>
-              </div>
         </div>
-
+        <a href="{{ route('privatais.index') }}" class="button">Mans Privātais Katalogs</a>
         <button type="submit" class="button">Ievietot sludinājumu</button>
         </form>
     </section>
-    <script>
-document.getElementById('images').addEventListener('change', function (event) {
-    const files = event.target.files;
-    const previewContainer = document.getElementById('preview-container');
-
-    previewContainer.innerHTML = ''; // Notīra vecos priekšskatījumus
-
-    Array.from(files).forEach(file => {
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.style.maxWidth = '150px';
-                img.style.maxHeight = '150px';
-                img.style.objectFit = 'cover';
-                img.style.border = '1px solid #ccc';
-                img.style.borderRadius = '8px';
-                previewContainer.appendChild(img);
-            };
-
-            reader.readAsDataURL(file);
-        }
-    });
-});
-</script>
-
 </body>
 <footer style="text-align: center; padding: 20px; background-color: #f1f1f1; color: #333; margin-top: 40px;">
     &copy; {{ date('Y') }} AutoLog. Visas tiesības aizsargātas.

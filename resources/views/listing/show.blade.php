@@ -384,12 +384,7 @@
                             <div class="rating-circle rating-{{ $listing->prev_inspection_rating }} active">
                                 {{ $listing->prev_inspection_rating }}
                             </div>
-                            <span>
-                                @if($listing->prev_inspection_rating == 1) Nepieciešams remonts
-                                @elseif($listing->prev_inspection_rating == 2) Nelielas nepilnības
-                                @elseif($listing->prev_inspection_rating == 3) Nav konstatētas nepilnības
-                                @endif
-                            </span>
+                            
                         </div>
                     @else
                         <p>Nav norādīts</p>
@@ -408,4 +403,7 @@
         <a href="{{ url()->previous() }}" class="back-button">Atpakaļ</a>
     </div>
 </body>
+<footer style="text-align: center; padding: 20px; background-color: #f1f1f1; color: #333; margin-top: 40px;">
+    &copy; {{ date('Y') }} AutoLog. Visas tiesības aizsargātas.
+</footer>
 </html>

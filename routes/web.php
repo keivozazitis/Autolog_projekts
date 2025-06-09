@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ListingController;
-
+use App\Http\Controllers\PrivataisKatalogsController;
 
 // Autentifikācijas skats
 Route::view('/auth', 'auth')->name('auth');
@@ -31,7 +31,9 @@ Route::get('/addListing', function () {
 Route::get('/sludinajumi', function () {
     return view('sludinajumi');
 });
-
+Route::get('/katalogs', function () {
+    return view('katalogs');
+});
 // Sludinājumu pievienošanas maršruts - saglabā dati no formas
 Route::post('/sludinajumi', [ListingController::class, 'store'])->name('listing.store');
 
@@ -50,3 +52,9 @@ Route::delete('/account/delete', [UserController::class, 'destroy'])
 Route::get('/sludinajumi', [ListingController::class, 'index']);
 Route::delete('/addListing/{listing}', [ListingController::class, 'destroy'])->name('listing.destroy');
 Route::get('/listing/{id}', [ListingController::class, 'show'])->name('listing.show');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/privatais', [PrivataisKatalogsController::class, 'index'])->name('privatais.index');
+    Route::get('/privatais/create', [PrivataisKatalogsController::class, 'create'])->name('privatais.create');
+    Route::post('/privatais', [PrivataisKatalogsController::class, 'store'])->name('privatais.store');
+});

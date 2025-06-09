@@ -43,8 +43,17 @@
         @endif
 
     </header> 
+    @foreach($ieraksti as $ieraksts)
+        <div>
+            <h3>{{ $ieraksts->brand }} {{ $ieraksts->model }}</h3>
+            <p>Gads: {{ $ieraksts->year }}</p>
+            <p>Cena: €{{ $ieraksts->price }}</p>
+            <hr>
+        </div>
+    @endforeach
+    
 </body>
-<footer style="text-align: center; padding: 20px; background-color: #f1f1f1; color: #333; margin-top: 40px; position:absolute; bottom: 0; width: 100%; box-sizing:border-box;">
+<footer style="text-align: center; padding: 20px; background-color: #f1f1f1; color: #333; margin-top: 40px;">
     &copy; {{ date('Y') }} AutoLog. Visas tiesības aizsargātas.
 </footer>
 </html>

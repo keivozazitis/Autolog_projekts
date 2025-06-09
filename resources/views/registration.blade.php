@@ -98,4 +98,7 @@
         @endif
     </script>
 </body>
+<footer style="text-align: center; padding: 20px; background-color: #f1f1f1; color: #333; margin-top: 40px; position:absolute; bottom: 0; width: 100%; box-sizing:border-box;">
+    &copy; {{ date('Y') }} AutoLog. Visas tiesības aizsargātas.
+</footer>
 </html>

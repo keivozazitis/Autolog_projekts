@@ -17,6 +17,9 @@
             @if(Auth::check())
             <a href="/addListing" class="header-nav-btn">IEVIETOT SLUDINĀJUMU</a>
             @endif
+            @if(Auth::check())
+            <a href="/katalogs" class="header-nav-btn">PRIVĀTAIS KATALOGS</a>
+            @endif 
             @if(!Auth::check())
             <a href="/registration" class="header-nav-btn">LOGIN</a>
             <a href="/registration" class="header-nav-btn">REGISTRATION</a>
@@ -77,4 +80,7 @@
     @endif
 
 </body>
+<footer style="text-align: center; padding: 20px; background-color: #f1f1f1; color: #333; margin-top: 40px; position:absolute; bottom: 0; width: 100%; box-sizing:border-box;">
+    &copy; {{ date('Y') }} AutoLog. Visas tiesības aizsargātas.
+</footer>
 </html>
