@@ -9,6 +9,11 @@ class PrivataisKatalogs extends Model
 {
     use HasFactory;
 
+    public function images()
+    {
+        return $this->hasMany(PrivataisKatalogsImage::class);
+    }
+
     protected $fillable = [
         'user_id',
         'brand',

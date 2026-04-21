@@ -1,162 +1,175 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,200;0,300;1,200&display=swap');
-*{
-	margin: 0px;
-	padding: 0px;
-}
-.center{
-	text-align: center;
-}
-.mt-10{
-	margin-top: 10px;
-}
-.mt-20{
-	margin-top: 20px;
-}
-.container{
-	height: 100vh;
-	width: 100%;
-	float: left;
-	background: #f8f8f8;
-}
-#LoginAndRegistrationForm{
-	width: 350px;
-	background: #fff;
-	margin: 100px auto;
-	border-radius: 10px;
-	box-sizing: border-box;
-	padding: 15px;
-	transform: scale(1.2);
-	box-shadow: 0px 0px 6px 0px #cdcdcd;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: #0c0c14;
+    color: #eeeef5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
 }
 
-#formTitle{
-	text-align: center;
-	padding-top: 10px;
-	font-family: 'Nunito Sans', sans-serif;
-	font-weight: bolder;
-	letter-spacing: 1px;
-	font-size: 25px;
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#formSwitchBtn{
-	display: flex;
-	justify-content: center;
-	padding: 20px 0px;
-}
-#formSwitchBtn button{
-	font-size: 17px;
-	letter-spacing: 1px;
-	font-family: 'Nunito Sans', sans-serif;
-	font-weight: bolder;
-	width: 160px;
-	height: 40px;
-	border: 0px;
-	cursor: pointer;
-	position: relative;
-	background: transparent;
-	border: 1px solid #747474;
-	transition: 0.4s;
-}
-#formSwitchBtn .active{
-	color: #fff;
-	background: #747474;
-}
-.input-text{
-	width: 100%;
-	height: 38px;
-	border: 0px;
-	border: 1px solid #747474;
-	box-sizing: border-box;
-	padding: 5px;
-	border-radius: 5px;
-	font-size: 17px;
-	font-family: 'Nunito Sans', sans-serif;
+#LoginAndRegistrationForm {
+    width: 100%;
+    max-width: 400px;
+    background: #191926;
+    border: 1px solid #272738;
+    border-radius: 16px;
+    padding: 36px 32px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.6);
 }
 
-.input-text:focus{
-	outline: none;
+#formTitle {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #eeeef5;
+    margin-bottom: 8px;
 }
 
-.forgot-pass-remember-me{
-	display: flex;
-	justify-content: center;
-	gap: 90px;
-	font-size: 14px;
+#formSwitchBtn {
+    display: flex;
+    gap: 0;
+    margin: 20px 0 24px;
+    background: #13131e;
+    border: 1px solid #272738;
+    border-radius: 8px;
+    padding: 4px;
 }
 
-.forgot-pass-remember-me #ForgotPassword{
-	color: #002b27;
-	font-weight: bold;
-	transition: 0.4s;
-}
-.forgot-pass-remember-me #ForgotPassword:hover{
-	color: #008d7f;
-}
-
-.forgot-pass-remember-me input{
-	height: 12px;
-}
-.forgot-pass-remember-me label{
-	font-family: 'Nunito Sans', sans-serif;
-}
-.forgot-pass-remember-me a{
-	text-decoration: none;
-	font-family: 'Nunito Sans', sans-serif;
-	font-style: italic;
-}
-.Submit-Btn{
-	width: 100%;
-	height: 42px;
-	border: 0px;
-	border-radius: 5px;
-	cursor: pointer;
-	font-size: 17px;
-	letter-spacing: 1px;
-	font-family: 'Nunito Sans', sans-serif;
-	font-weight: bolder;
-	transition: 0.4s;
-	background-color: #747474;
-	color: #fff;
-}
-.Submit-Btn:hover{
-	background-color: #444444;
-	color: #fff;
-	
-}
-.dont-have-account,
-.already-have-account{
-	font-family: 'Nunito Sans', sans-serif;
-	letter-spacing: 0.3px;
-	font-size: 14px;
-	color: #747474;
-}
-.dont-have-account a,
-.already-have-account a{
-	font-family: 'Nunito Sans', sans-serif;
-	font-style: italic !important;
-	text-decoration: none;
-	color: #002b27;
-	font-weight: bold;
-	transition: 0.4s;
-}
-.dont-have-account a:hover,
-.already-have-account a:hover{
-	color: #008d7f;
+#formSwitchBtn button {
+    flex: 1;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.01em;
+    background: transparent;
+    color: #8888a8;
+    transition: all 0.2s ease;
 }
 
-#RegistrationFrom,
-#ForgotPasswordForm{
-	display: none;
+#formSwitchBtn .active {
+    background: #d9d9d9;
+    color: #111;
+    box-shadow: 0 2px 8px rgba(230,57,70,0.35);
 }
-.error-input{
-	border: 1px solid #ff5b5b;
+
+.center { display: flex; flex-direction: column; gap: 10px; }
+
+.input-text {
+    width: 100%;
+    height: 42px;
+    background: #1a1a28;
+    border: 1px solid #272738;
+    border-radius: 8px;
+    padding: 0 14px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    color: #eeeef5;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
-.error-message{
-	font-size: 11px; 
-	font-weight: bold; 
-	color: #ff5b5b;
-	text-align: left; 
-	margin: 0px; 
-	padding: 0px; 
-	margin-top: 2px; 
+
+.input-text:focus {
+    outline: none;
+    border-color: #d9d9d9;
+    box-shadow: 0 0 0 3px rgba(217,217,217,0.1);
 }
+
+.input-text::placeholder { color: #55556e; }
+
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+
+.forgot-pass-remember-me {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: #8888a8;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.remember-me label { cursor: pointer; font-family: 'Inter', sans-serif; }
+
+.remember-me input[type="checkbox"] {
+    width: 15px; height: 15px;
+    accent-color: #d9d9d9;
+    cursor: pointer;
+}
+
+.Submit-Btn {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.02em;
+    background: #d9d9d9;
+    color: #111;
+    transition: all 0.18s ease;
+    margin-top: 6px;
+}
+
+.Submit-Btn:hover {
+    background: #b8b8b8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(217,217,217,0.2);
+}
+
+.error-message {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #d9d9d9;
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: rgba(230,57,70,0.08);
+    border: 1px solid rgba(230,57,70,0.25);
+    border-radius: 6px;
+}
+
+.error-message ul { margin: 0; padding-left: 16px; }
+.error-message li { margin: 3px 0; }
+
+#RegistrationFrom { display: none; }
+
+.form-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.82rem;
+    color: #55556e;
+}
+
+.form-footer a {
+    color: #d9d9d9;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.form-footer a:hover { text-decoration: underline; }

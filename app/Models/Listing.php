@@ -29,4 +29,9 @@ class Listing extends Model
     {
         return $this->hasMany(ListingImage::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

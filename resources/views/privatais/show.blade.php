@@ -1,10 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $listing->brand . ' ' . $listing->model . ' — AutoLog')
-
-@push('styles')
-@vite(['resources/js/addlisting.js'])
-@endpush
+@section('title', $ieraksts->brand . ' ' . $ieraksts->model . ' — Mans katalogs')
 
 @push('scripts')
 <script>
@@ -40,141 +36,153 @@ document.addEventListener('keydown', e => {
 @section('content')
 <div class="listing-detail">
 
-    {{-- ── Header ── --}}
     <div class="listing-detail-header">
         <h1 class="listing-title">
-            {{ $listing->brand }} {{ $listing->model }}
-            <span style="font-weight:400; color: var(--text-secondary);">({{ $listing->year }})</span>
+            {{ $ieraksts->brand }} {{ $ieraksts->model }}
+            <span style="font-weight:400; color: var(--text-secondary);">({{ $ieraksts->year }})</span>
         </h1>
-        <div class="price-tag">€{{ number_format($listing->price, 2) }}</div>
+        <div class="price-tag">€{{ number_format($ieraksts->price, 2) }}</div>
     </div>
 
-    {{-- ── Pamatinformācija ── --}}
+    {{-- Pamatinformācija --}}
     <div class="details-card">
         <h2 class="details-title">Pamatinformācija</h2>
         <div class="spec-grid">
             <div class="spec-item">
                 <span class="spec-label">Marka</span>
-                <span class="spec-value">{{ $listing->brand }}</span>
+                <span class="spec-value">{{ $ieraksts->brand }}</span>
             </div>
             <div class="spec-item">
                 <span class="spec-label">Modelis</span>
-                <span class="spec-value">{{ $listing->model }}</span>
+                <span class="spec-value">{{ $ieraksts->model }}</span>
             </div>
             <div class="spec-item">
                 <span class="spec-label">Gads</span>
-                <span class="spec-value">{{ $listing->year }}</span>
+                <span class="spec-value">{{ $ieraksts->year }}</span>
             </div>
             <div class="spec-item">
                 <span class="spec-label">Virsbūves tips</span>
-                <span class="spec-value">{{ $listing->body_type ?: '—' }}</span>
+                <span class="spec-value">{{ $ieraksts->body_type ?: '—' }}</span>
             </div>
             <div class="spec-item">
                 <span class="spec-label">Degvielas tips</span>
-                <span class="spec-value">{{ $listing->fuel_type ?: '—' }}</span>
+                <span class="spec-value">{{ $ieraksts->fuel_type ?: '—' }}</span>
             </div>
             <div class="spec-item">
                 <span class="spec-label">Ātrumkārba</span>
-                <span class="spec-value">{{ $listing->transmission ?: '—' }}</span>
+                <span class="spec-value">{{ $ieraksts->transmission ?: '—' }}</span>
             </div>
         </div>
     </div>
 
-    {{-- ── Tehniskie dati ── --}}
+    {{-- Tehniskie dati --}}
     <div class="details-card">
         <h2 class="details-title">Tehniskie dati</h2>
         <div class="spec-grid">
             <div class="spec-item">
                 <span class="spec-label">Dzinēja tilpums</span>
-                <span class="spec-value">{{ $listing->engine_volume ? $listing->engine_volume . ' cm³' : '—' }}</span>
+                <span class="spec-value">{{ $ieraksts->engine_volume ? $ieraksts->engine_volume . ' cm³' : '—' }}</span>
             </div>
             <div class="spec-item">
                 <span class="spec-label">Nobraukums</span>
-                <span class="spec-value">{{ $listing->mileage ? number_format($listing->mileage) . ' km' : '—' }}</span>
+                <span class="spec-value">{{ $ieraksts->mileage ? number_format($ieraksts->mileage) . ' km' : '—' }}</span>
             </div>
             <div class="spec-item">
                 <span class="spec-label">Krāsa</span>
-                <span class="spec-value">{{ $listing->color ?: '—' }}</span>
+                <span class="spec-value">{{ $ieraksts->color ?: '—' }}</span>
             </div>
             <div class="spec-item">
                 <span class="spec-label">Numurzīme</span>
-                <span class="spec-value">{{ $listing->license_plate ?: '—' }}</span>
+                <span class="spec-value">{{ $ieraksts->license_plate ?: '—' }}</span>
             </div>
             <div class="spec-item">
                 <span class="spec-label">VIN kods</span>
-                <span class="spec-value" style="word-break:break-all;">{{ $listing->vin ?: '—' }}</span>
+                <span class="spec-value" style="word-break:break-all;">{{ $ieraksts->vin ?: '—' }}</span>
             </div>
             <div class="spec-item">
                 <span class="spec-label">Nākamā apskate</span>
-                <span class="spec-value">{{ $listing->next_inspection ?: '—' }}</span>
+                <span class="spec-value">{{ $ieraksts->next_inspection ?: '—' }}</span>
             </div>
         </div>
     </div>
 
-    {{-- ── Apraksts ── --}}
-    @if($listing->description)
+    {{-- Tehniskā apskate --}}
+    @if($ieraksts->prev_inspection_rating || $ieraksts->prev_inspection_problem)
     <div class="details-card">
-        <h2 class="details-title">Apraksts</h2>
-        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">{{ $listing->description }}</p>
+        <h2 class="details-title">Tehniskā apskate</h2>
+        <div class="spec-grid">
+            @if($ieraksts->prev_inspection_rating)
+            <div class="spec-item">
+                <span class="spec-label">Iepriekšējās apskates vērtējums</span>
+                <div class="inspection-rating" style="margin-top:6px;">
+                    <div class="rating-circle rating-{{ $ieraksts->prev_inspection_rating }}">
+                        {{ $ieraksts->prev_inspection_rating }}
+                    </div>
+                    <span class="spec-value">
+                        @if($ieraksts->prev_inspection_rating == 0) Viss kārtībā (bez defektiem)
+                        @elseif($ieraksts->prev_inspection_rating == 1) Sīks trūkums vai bojājums
+                        @elseif($ieraksts->prev_inspection_rating == 2) Būtisks trūkums vai bojājums
+                        @else Bīstams trūkums vai bojājums
+                        @endif
+                    </span>
+                </div>
+            </div>
+            @endif
+            @if($ieraksts->prev_inspection_problem)
+            <div class="spec-item">
+                <span class="spec-label">Konstatētās nepilnības</span>
+                <span class="spec-value">{{ $ieraksts->prev_inspection_problem }}</span>
+            </div>
+            @endif
+        </div>
     </div>
     @endif
 
-    {{-- ── Galerija ── --}}
-    @if($listing->images->count())
+    {{-- Galerija --}}
+    @if($ieraksts->images->count())
     <div class="details-card">
-        <h2 class="details-title">Galerija — klikšķini uz bildi pilnekrāna skatam</h2>
+        <h2 class="details-title">Galerija</h2>
         <div class="gallery">
-            @foreach ($listing->images as $image)
+            @foreach ($ieraksts->images as $image)
                 <img src="{{ asset($image->image_path) }}"
-                     alt="{{ $listing->brand }} {{ $listing->model }}"
+                     alt="{{ $ieraksts->brand }} {{ $ieraksts->model }}"
                      onclick="openLightbox(this.src)">
             @endforeach
         </div>
     </div>
     @endif
 
-    {{-- Lightbox --}}
     <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
         <button class="lightbox-close" onclick="closeLightbox()">&#x2715;</button>
         <button id="lb-prev" class="lb-nav lb-prev" onclick="lbPrev(event)">&#8592;</button>
-        <img id="lightbox-img" src="" alt="Pilnekrāna attēls" onclick="event.stopPropagation()">
+        <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
         <button id="lb-next" class="lb-nav lb-next" onclick="lbNext(event)">&#8594;</button>
         <span id="lb-counter" class="lb-counter"></span>
     </div>
 
-    {{-- ── Tehniskā apskate ── --}}
+    {{-- Apraksts --}}
+    @if($ieraksts->description)
     <div class="details-card">
-        <h2 class="details-title">Tehniskā apskate</h2>
-        <div class="spec-grid">
-            <div class="spec-item">
-                <span class="spec-label">Iepriekšējās apskates vērtējums</span>
-                @if($listing->prev_inspection_rating)
-                    <div class="inspection-rating" style="margin-top:6px;">
-                        <div class="rating-circle rating-{{ $listing->prev_inspection_rating }}">
-                            {{ $listing->prev_inspection_rating }}
-                        </div>
-                        <span class="spec-value">
-                            @if($listing->prev_inspection_rating == 0) Viss kārtībā (bez defektiem)
-                            @elseif($listing->prev_inspection_rating == 1) Sīks trūkums vai bojājums
-                            @elseif($listing->prev_inspection_rating == 2) Būtisks trūkums vai bojājums
-                            @else Bīstams trūkums vai bojājums
-                            @endif
-                        </span>
-                    </div>
-                @else
-                    <span class="spec-value">Nav norādīts</span>
-                @endif
-            </div>
+        <h2 class="details-title">Apraksts</h2>
+        <p style="color: var(--text-secondary); line-height: 1.7; margin: 0;">{{ $ieraksts->description }}</p>
+    </div>
+    @endif
 
-            @if($listing->prev_inspection_problem)
-            <div class="spec-item">
-                <span class="spec-label">Konstatētās nepilnības</span>
-                <span class="spec-value">{{ $listing->prev_inspection_problem }}</span>
-            </div>
-            @endif
-        </div>
+    {{-- Darbības --}}
+    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:8px;">
+        <a href="{{ route('privatais.index') }}" class="back-button" style="margin-top:0;">&#8592; Atpakaļ uz katalogu</a>
+
+        <form action="{{ route('privatais.destroy', $ieraksts->id) }}" method="POST"
+              onsubmit="return confirm('Vai tiešām dzēst šo ierakstu?')"
+              style="margin:0;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="button"
+                    style="background:transparent; border:1px solid #c0392b; color:#e74c3c;">
+                Dzēst ierakstu
+            </button>
+        </form>
     </div>
 
-    <a href="{{ url()->previous() }}" class="back-button">&#8592; Atpakaļ</a>
 </div>
 @endsection

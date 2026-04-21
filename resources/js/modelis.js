@@ -72,3 +72,31 @@ brandSelect.addEventListener('change', function () {
         modelSelect.disabled = true;
     }
 });
+// Dropdown toggle
+    document.querySelector('.filter-dropdown-toggle').addEventListener('click', function() {
+        const content = document.querySelector('.filter-dropdown-content');
+        if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+        } else {
+            content.style.display = 'none';
+        }
+    });
+
+    // Model selection based on brand
+    document.getElementById('brand').addEventListener('change', function() {
+        const modelSelect = document.getElementById('model');
+        modelSelect.innerHTML = '<option value="">Vispirms izvēlies marku</option>';
+        modelSelect.disabled = !this.value;
+        
+        if (!this.value) return;
+        
+        // Here you would typically fetch models for the selected brand from your server
+        // For now, let's just add some dummy models based on brand
+        const models = getModelsForBrand(this.value);
+        models.forEach(model => {
+            const option = document.createElement('option');
+            option.value = model.toLowerCase();
+            option.textContent = model;
+            modelSelect.appendChild(option);
+        });
+    });

@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\PrivataisKatalogsController;
+use App\Http\Controllers\AdminController;
 
 // Autentifikācijas skats
 Route::view('/auth', 'auth')->name('auth');
@@ -57,4 +58,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/privatais', [PrivataisKatalogsController::class, 'index'])->name('privatais.index');
     Route::get('/privatais/create', [PrivataisKatalogsController::class, 'create'])->name('privatais.create');
     Route::post('/privatais', [PrivataisKatalogsController::class, 'store'])->name('privatais.store');
+    Route::get('/privatais/{id}', [PrivataisKatalogsController::class, 'show'])->name('privatais.show');
+    Route::delete('/privatais/{id}', [PrivataisKatalogsController::class, 'destroy'])->name('privatais.destroy');
+});
+Route::get('/', [App\Http\Controllers\HomeController::class, 'welcome']);
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('index');
+    Route::delete('/listings/{listing}', [AdminController::class, 'destroyListing'])->name('listings.destroy');
 });

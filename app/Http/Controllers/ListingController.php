@@ -80,27 +80,56 @@ class ListingController extends Controller
                 'description' => ['nullable', 'string'],
                 'prev_inspection_problem' => ['nullable', 'array'],
                 'prev_inspection_problem.*' => ['string'],
-                'images.*' => ['nullable', 'image', 'max:5120'], // max 5MB per image
+                'images.*' => ['nullable', 'image', 'max:15360'], // max 15MB per image
             ], [
                 'model.in' => 'Izvēlētais modelis nav derīgs izvēlētajai markai.',
                 'price.decimal' => 'Cenai jābūt ar 2 zīmēm aiz komata.',
                 'images.*.image' => 'Katrai augšupielādētajai bildei jābūt attēla formātā.',
-                'images.*.max' => 'Bildei jābūt mazākai par 5MB.'
+                'images.*.max' => 'Bildei jābūt mazākai par 15MB.'
             ]);
 
             $validated['prev_inspection_problem'] = implode(', ', $validated['prev_inspection_problem'] ?? []);
             $listing = Listing::create($validated);
+            Log::info('Listing izveidots ar ID: ' . $listing->id);
+
 
             if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    if ($image->isValid()) {
-                        $path = $image->store('listing_images', 'public');
+                $dir = storage_path('app/public/listing_images');
+                if (!file_exists($dir)) mkdir($dir, 0755, true);
 
-                        ListingImage::create([
-                            'listing_id' => $listing->id,
-                            'image_path' => 'storage/' . $path,
-                        ]);
+                foreach ($request->file('images') as $image) {
+                    if (!$image->isValid()) continue;
+
+                    $orientation = 1;
+                    if (function_exists('exif_read_data')) {
+                        $exif = @exif_read_data($image->getRealPath());
+                        $orientation = $exif['Orientation'] ?? 1;
                     }
+
+                    $ext = strtolower($image->getClientOriginalExtension()) ?: 'jpg';
+                    $filename = uniqid('img_', true) . '.' . $ext;
+
+                    if (in_array($orientation, [3, 6, 8])) {
+                        // Rotation needed — re-encode with GD at max quality
+                        $src = @imagecreatefromstring(file_get_contents($image->getRealPath()));
+                        if (!$src) continue;
+                        switch ($orientation) {
+                            case 3: $src = imagerotate($src, 180, 0); break;
+                            case 6: $src = imagerotate($src, -90, 0); break;
+                            case 8: $src = imagerotate($src, 90, 0); break;
+                        }
+                        $filename = uniqid('img_', true) . '.jpg';
+                        imagejpeg($src, $dir . '/' . $filename, 100);
+                        imagedestroy($src);
+                    } else {
+                        // No rotation — copy original bytes, zero quality loss
+                        $image->move($dir, $filename);
+                    }
+
+                    ListingImage::create([
+                        'listing_id' => $listing->id,
+                        'image_path' => 'storage/listing_images/' . $filename,
+                    ]);
                 }
             }
             

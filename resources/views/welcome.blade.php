@@ -1,50 +1,126 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AutoLog</title>
-    <link rel="stylesheet" href="app.css">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    @vite(['resources/css/app.css','resources/js/toggle.js', 'public/autolog.png', 'resources/js/modelis.js'])
-</head>
-<body>
-    <header>
-        <!--headeris-->
-        <img src="autolog.png" alt="logo" width="150" height="120">
-        <div class="header-text">
-            <a href="/" style="text-decoration: none; color: inherit;">
-                <h1>Autolog</h1>
-            </a>
-            <a href="/sludinajumi" class="header-nav-btn">SLUDINĀJUMI</a>
-            @if(Auth::check())
-            <a href="/addListing" class="header-nav-btn">IEVIETOT SLUDINĀJUMU</a>
-            @endif
-            @if(Auth::check())
-            <a href="/katalogs" class="header-nav-btn">PRIVĀTAIS KATALOGS</a>
-            @endif
-            @if(!Auth::check())
-            <a href="/registration" class="header-nav-btn">LOGIN</a>
-            <a href="/registration" class="header-nav-btn">REGISTRATION</a>
-            @endif
-        </div>
-        <a href="/profile" class="header-nav-btn profile-btn">
-            @if(Auth::check())
-            {{ Auth::user()->name }}
-            @else
-            PROFILS
-            @endif
-        </a>
-        @if(Auth::check())
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="header-nav-btn" style="color: red;">Logout</button>
-        </form>
-        @endif
+@extends('layouts.app')
 
-    </header> 
-</body>
-<footer style="text-align: center; padding: 20px; background-color: #f1f1f1; color: #333; margin-top: 40px; position:absolute; bottom: 0; width: 100%; box-sizing:border-box;">
-    &copy; {{ date('Y') }} AutoLog. Visas tiesības aizsargātas.
-</footer>
-</html>
+@section('title', 'AutoLog — Latvijas Automašīnu Tirgus')
+
+@section('content')
+<section class="hero-section">
+    <div class="hero-bg-grid"></div>
+
+    <div class="hero-content">
+        <div class="hero-badge">&#x1F697; Latvijas automašīnu tirgus</div>
+        <h1 class="hero-title">
+            Atrodi savu<br><span class="accent">sapņu auto</span>
+        </h1>
+        <p class="hero-subtitle">
+            Tūkstošiem verificētu sludinājumu. Meklē pēc markas, cenas un gada.
+        </p>
+    </div>
+
+    {{-- ── Ātrā meklēšana ── --}}
+    <div class="quick-search-box">
+        <form action="/sludinajumi" method="GET" class="quick-search-form">
+            <div class="qs-field">
+                <label for="qs-brand">Marka</label>
+                <select id="qs-brand" name="brand">
+                    <option value="">Visas markas</option>
+                    <option value="alfaromeo">Alfa Romeo</option>
+                    <option value="audi">Audi</option>
+                    <option value="bmw">BMW</option>
+                    <option value="chevrolet">Chevrolet</option>
+                    <option value="chrysler">Chrysler</option>
+                    <option value="citroen">Citroen</option>
+                    <option value="cupra">Cupra</option>
+                    <option value="dacia">Dacia</option>
+                    <option value="dodge">Dodge</option>
+                    <option value="fiat">Fiat</option>
+                    <option value="ford">Ford</option>
+                    <option value="honda">Honda</option>
+                    <option value="hyundai">Hyundai</option>
+                    <option value="infiniti">Infiniti</option>
+                    <option value="jaguar">Jaguar</option>
+                    <option value="jeep">Jeep</option>
+                    <option value="kia">Kia</option>
+                    <option value="lancia">Lancia</option>
+                    <option value="landrover">Land Rover</option>
+                    <option value="lexus">Lexus</option>
+                    <option value="mazda">Mazda</option>
+                    <option value="mercedes">Mercedes</option>
+                    <option value="mini">Mini</option>
+                    <option value="mitsubishi">Mitsubishi</option>
+                    <option value="nissan">Nissan</option>
+                    <option value="opel">Opel</option>
+                    <option value="peugeot">Peugeot</option>
+                    <option value="porsche">Porsche</option>
+                    <option value="renault">Renault</option>
+                    <option value="saab">Saab</option>
+                    <option value="seat">Seat</option>
+                    <option value="skoda">Skoda</option>
+                    <option value="smart">Smart</option>
+                    <option value="subaru">Subaru</option>
+                    <option value="suzuki">Suzuki</option>
+                    <option value="tesla">Tesla</option>
+                    <option value="toyota">Toyota</option>
+                    <option value="volkswagen">Volkswagen</option>
+                    <option value="volvo">Volvo</option>
+                    <option value="gaz">Gaz</option>
+                    <option value="uaz">Uaz</option>
+                    <option value="vaz">Vaz</option>
+                    <option value="citas markas">Citas markas</option>
+                </select>
+            </div>
+
+            <div class="qs-field qs-price-group">
+                <label>Cena (€)</label>
+                <div class="qs-range">
+                    <input type="number" name="price-from" placeholder="No" min="0">
+                    <span class="qs-range-sep">—</span>
+                    <input type="number" name="price-to" placeholder="Līdz" min="0">
+                </div>
+            </div>
+
+            <div class="qs-field">
+                <label for="qs-year">Gads</label>
+                <select id="qs-year" name="year">
+                    <option value="">Visi gadi</option>
+                    @for ($y = date('Y'); $y >= 1990; $y--)
+                        <option value="{{ $y }}">{{ $y }}</option>
+                    @endfor
+                </select>
+            </div>
+
+            <button type="submit" class="qs-submit">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Meklēt
+            </button>
+        </form>
+    </div>
+
+    {{-- ── Populārās markas ── --}}
+    <div style="position:relative; z-index:1; width:100%; max-width:960px; margin-top:48px;">
+        <p style="text-align:center; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-muted); margin-bottom:16px;">
+            Populārās markas
+        </p>
+        <div class="brand-cards">
+            <a href="/sludinajumi?brand=bmw" class="brand-logo-card">
+                <div class="brand-logo-img-wrap">
+                    <img src="{{ asset('logos/bmw.svg') }}" alt="BMW">
+                </div>
+                <span class="brand-logo-name">BMW</span>
+            </a>
+            <a href="/sludinajumi?brand=audi" class="brand-logo-card">
+                <div class="brand-logo-img-wrap">
+                    <img src="{{ asset('logos/audi.svg') }}" alt="Audi">
+                </div>
+                <span class="brand-logo-name">Audi</span>
+            </a>
+            <a href="/sludinajumi?brand=volkswagen" class="brand-logo-card">
+                <div class="brand-logo-img-wrap">
+                    <img src="{{ asset('logos/vw.svg') }}" alt="Volkswagen">
+                </div>
+                <span class="brand-logo-name">Volkswagen</span>
+            </a>
+        </div>
+    </div>
+
+</section>
+@endsection
