@@ -11,7 +11,7 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $listings = Listing::with('images', 'user')->latest()->get();
+        $listings = Listing::with('images', 'user')->latest()->paginate(25);
         $users = User::withCount('listings')->latest()->get();
         return view('admin.index', compact('listings', 'users'));
     }

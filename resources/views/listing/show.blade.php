@@ -49,6 +49,19 @@ document.addEventListener('keydown', e => {
         <div class="price-tag">€{{ number_format($listing->price, 2) }}</div>
     </div>
 
+    @if($listing->user)
+    <div style="margin-bottom:20px;">
+        <a href="{{ route('user.profile', $listing->user->id) }}"
+           style="display:inline-flex; align-items:center; gap:10px; text-decoration:none; color:var(--text-secondary); font-size:0.875rem; transition:color 0.15s;"
+           onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+            <span style="width:32px; height:32px; border-radius:50%; background:var(--bg-elevated); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:0.8rem; color:var(--accent); flex-shrink:0;">
+                {{ strtoupper(substr($listing->user->name, 0, 1)) }}
+            </span>
+            {{ $listing->user->name }}
+        </a>
+    </div>
+    @endif
+
     {{-- ── Pamatinformācija ── --}}
     <div class="details-card">
         <h2 class="details-title">Pamatinformācija</h2>
@@ -175,6 +188,13 @@ document.addEventListener('keydown', e => {
         </div>
     </div>
 
-    <a href="{{ url()->previous() }}" class="back-button">&#8592; Atpakaļ</a>
+    <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+        <a href="{{ url()->previous() }}" class="back-button" style="margin-top:0;">&#8592; Atpakaļ</a>
+        @auth
+            @if(Auth::id() === $listing->user_id || Auth::user()->is_admin)
+                <a href="{{ route('listing.edit', $listing->id) }}" class="button btn-secondary">Rediģēt</a>
+            @endif
+        @endauth
+    </div>
 </div>
 @endsection

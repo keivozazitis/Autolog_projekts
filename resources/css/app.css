@@ -1159,6 +1159,57 @@ body {
 }
 
 /* ════════════════════════════
+   PAGINATION */
+
+.pagination-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 36px;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    gap: 4px;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination li a,
+.pagination li span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.pagination li a:hover {
+    background: var(--bg-elevated);
+    border-color: var(--border-light);
+    color: var(--text-primary);
+}
+
+.pagination li.active span {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #111;
+    font-weight: 600;
+}
+
+.pagination li.disabled span {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* ════════════════════════════
    FORM PAGES (addListing, katalogs)
 ════════════════════════════ */
 .form-page {

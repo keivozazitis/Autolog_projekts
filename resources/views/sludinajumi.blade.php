@@ -185,12 +185,16 @@
                         <a href="{{ route('listing.show', $listing->id) }}">
                             <button type="button" class="button">Apskatīt</button>
                         </a>
-                        <form action="{{ route('listing.destroy', $listing->id) }}" method="POST"
-                              onsubmit="return confirm('Dzēst šo sludinājumu?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="button btn-danger">Dzēst</button>
-                        </form>
+                        @auth
+                            @if(Auth::id() === $listing->user_id || Auth::user()->is_admin)
+                            <form action="{{ route('listing.destroy', $listing->id) }}" method="POST"
+                                  onsubmit="return confirm('Dzēst šo sludinājumu?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="button btn-danger">Dzēst</button>
+                            </form>
+                            @endif
+                        @endauth
                     </div>
                 </div>
             </div>
@@ -200,6 +204,13 @@
             </div>
         @endforelse
     </div>
+
+    @if($listings->hasPages())
+    <div class="pagination-wrap">
+        {{ $listings->links() }}
+    </div>
+    @endif
+
 </div>
 @endsection
 

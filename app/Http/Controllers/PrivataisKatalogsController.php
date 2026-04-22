@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PrivataisKatalogs;
 use App\Models\PrivataisKatalogsImage;
+use App\Models\Listing;
+use App\Models\ListingImage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -87,6 +89,43 @@ class PrivataisKatalogsController extends Controller
         }
 
         return redirect()->route('privatais.index')->with('success', 'Dati saglabāti!');
+    }
+
+    public function publish($id)
+    {
+        $ieraksts = PrivataisKatalogs::with('images')->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $listing = Listing::create([
+            'user_id'                  => Auth::id(),
+            'brand'                    => $ieraksts->brand,
+            'model'                    => $ieraksts->model,
+            'year'                     => $ieraksts->year,
+            'price'                    => $ieraksts->price,
+            'body_type'                => $ieraksts->body_type,
+            'fuel_type'                => $ieraksts->fuel_type,
+            'transmission'             => $ieraksts->transmission,
+            'engine_volume'            => $ieraksts->engine_volume,
+            'mileage'                  => $ieraksts->mileage,
+            'color'                    => $ieraksts->color,
+            'license_plate'            => $ieraksts->license_plate,
+            'vin'                      => $ieraksts->vin,
+            'next_inspection'          => $ieraksts->next_inspection,
+            'description'              => $ieraksts->description,
+            'prev_inspection_rating'   => $ieraksts->prev_inspection_rating,
+            'prev_inspection_problem'  => $ieraksts->prev_inspection_problem,
+        ]);
+
+        foreach ($ieraksts->images as $image) {
+            ListingImage::create([
+                'listing_id' => $listing->id,
+                'image_path' => $image->image_path,
+            ]);
+        }
+
+        return redirect()->route('listing.show', $listing->id)
+            ->with('success', 'Sludinājums publicēts!');
     }
 
     public function destroy($id)

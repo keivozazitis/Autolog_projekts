@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'AutoLog')</title>
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,7 +17,6 @@
     <div class="header-inner">
         <div class="header-brand">
             <a href="/" class="brand-link">
-                <img src="{{ asset('autolog.png') }}" alt="AutoLog" class="brand-logo">
                 <span class="brand-name">Auto<span class="accent">Log</span></span>
             </a>
         </div>
@@ -37,10 +37,6 @@
                     <button type="submit" class="btn-logout">Iziet</button>
                 </form>
             @endauth
-            @guest
-                <a href="/registration" class="nav-link">Ielogoties</a>
-                <a href="/registration" class="nav-link">Reģistrēties</a>
-            @endguest
         </nav>
 
         <div class="header-actions">

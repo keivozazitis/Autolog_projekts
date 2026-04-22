@@ -73,5 +73,9 @@
         </table>
     </div>
 
+    @if($listings->hasPages())
+    <div class="pagination-wrap">{{ $listings->links() }}</div>
+    @endif
+
 </div>
 @endsection

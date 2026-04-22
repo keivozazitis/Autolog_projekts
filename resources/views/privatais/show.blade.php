@@ -172,6 +172,15 @@ document.addEventListener('keydown', e => {
     <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:8px;">
         <a href="{{ route('privatais.index') }}" class="back-button" style="margin-top:0;">&#8592; Atpakaļ uz katalogu</a>
 
+        <form action="{{ route('privatais.publish', $ieraksts->id) }}" method="POST"
+              onsubmit="return confirm('Publicēt šo auto kā publisku sludinājumu?')"
+              style="margin:0;">
+            @csrf
+            <button type="submit" class="button">
+                &#8679; Publicēt kā sludinājumu
+            </button>
+        </form>
+
         <form action="{{ route('privatais.destroy', $ieraksts->id) }}" method="POST"
               onsubmit="return confirm('Vai tiešām dzēst šo ierakstu?')"
               style="margin:0;">

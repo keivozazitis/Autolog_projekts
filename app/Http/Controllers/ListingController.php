@@ -89,6 +89,7 @@ class ListingController extends Controller
             ]);
 
             $validated['prev_inspection_problem'] = implode(', ', $validated['prev_inspection_problem'] ?? []);
+            $validated['user_id'] = Auth::id();
             $listing = Listing::create($validated);
             Log::info('Listing izveidots ar ID: ' . $listing->id);
 
@@ -186,7 +187,7 @@ class ListingController extends Controller
         $query->where('engine_volume', '<=', $request->input('engine-volume-to'));
     }
 
-    $listings = $query->get();
+    $listings = $query->latest()->paginate(12)->withQueryString();
 
     return view('sludinajumi', compact('listings'));
 }
@@ -197,10 +198,115 @@ class ListingController extends Controller
         return view('listing.show', compact('listing'));
     }
 
+    public function edit(Listing $listing)
+    {
+        if (Auth::id() !== $listing->user_id && !Auth::user()->is_admin) {
+            abort(403);
+        }
+        return view('listing.edit', compact('listing'));
+    }
+
+    public function update(Request $request, Listing $listing)
+    {
+        if (Auth::id() !== $listing->user_id && !Auth::user()->is_admin) {
+            abort(403);
+        }
+
+        $carModels = [
+            'alfaromeo' => ["Giulia","Stelvio","MiTo"],'audi' => ["A3","A4","A6"],
+            'bmw' => ["3 Series","5 Series","X5"],'chevrolet' => ["Camaro","Malibu","Tahoe"],
+            'chrysler' => ["300","Pacifica","Voyager"],'citroen' => ["C3","C4","Berlingo"],
+            'cupra' => ["Formentor","Leon","Born"],'dacia' => ["Duster","Sandero","Logan"],
+            'dodge' => ["Charger","Challenger","Durango"],'fiat' => ["500","Panda","Tipo"],
+            'ford' => ["Focus","Mondeo","Kuga"],'honda' => ["Civic","Accord","CR-V"],
+            'hyundai' => ["i30","Tucson","Santa Fe"],'infiniti' => ["Q50","QX50","QX60"],
+            'jaguar' => ["XE","F-Pace","XF"],'jeep' => ["Wrangler","Grand Cherokee","Compass"],
+            'kia' => ["Ceed","Sportage","Sorento"],'lancia' => ["Ypsilon","Delta","Thema"],
+            'landrover' => ["Discovery","Range Rover","Defender"],'lexus' => ["IS","RX","NX"],
+            'mazda' => ["3","6","CX-5"],'mercedes' => ["C-Class","E-Class","GLC"],
+            'mini' => ["Cooper","Countryman","Clubman"],'mitsubishi' => ["Outlander","ASX","Eclipse Cross"],
+            'nissan' => ["Qashqai","X-Trail","Leaf"],'opel' => ["Corsa","Astra","Insignia"],
+            'peugeot' => ["208","3008","5008"],'porsche' => ["911","Cayenne","Panamera"],
+            'renault' => ["Clio","Megane","Captur"],'saab' => ["9-3","9-5","900"],
+            'seat' => ["Ibiza","Leon","Ateca"],'skoda' => ["Octavia","Fabia","Kodiaq"],
+            'smart' => ["ForTwo","ForFour","EQ ForTwo"],'subaru' => ["Impreza","Forester","Outback"],
+            'suzuki' => ["Swift","Vitara","SX4 S-Cross"],'tesla' => ["Model S","Model 3","Model X"],
+            'toyota' => ["Corolla","Camry","RAV4"],'volkswagen' => ["Golf","Passat","Tiguan"],
+            'volvo' => ["XC60","XC90","S60"],'gaz' => ["Gazelle","Volga","Sobol"],
+            'uaz' => ["Hunter","Patriot","Bukhanka"],'vaz' => ["2101","2107","Niva"],
+        ];
+        $allowedModels = $carModels[$request->input('brand')] ?? [];
+
+        $validated = $request->validate([
+            'brand'       => ['required','string','max:255'],
+            'model'       => ['required','string','max:255', Rule::in($allowedModels)],
+            'year'        => ['required','integer','min:1950','max:'.(date('Y')+1)],
+            'price'       => ['required','numeric','min:0'],
+            'body_type'   => ['nullable','string'],
+            'fuel_type'   => ['nullable','string'],
+            'transmission'=> ['nullable','string'],
+            'engine_volume'=> ['nullable','integer'],
+            'mileage'     => ['nullable','integer'],
+            'color'       => ['nullable','string'],
+            'license_plate'=> ['nullable','string'],
+            'vin'         => ['nullable','string'],
+            'next_inspection'=> ['nullable','date'],
+            'description' => ['nullable','string'],
+            'images.*'    => ['nullable','image','max:65536'],
+            'remove_images' => ['nullable','array'],
+            'remove_images.*' => ['integer'],
+        ]);
+
+        $listing->update(\Illuminate\Support\Arr::except($validated, ['images','remove_images']));
+
+        // Dzēst atzīmētās bildes
+        if ($request->filled('remove_images')) {
+            foreach ($listing->images()->whereIn('id', $request->remove_images)->get() as $img) {
+                Storage::delete(str_replace('storage/', 'public/', $img->image_path));
+                $img->delete();
+            }
+        }
+
+        // Pievienot jaunas bildes
+        if ($request->hasFile('images')) {
+            $dir = storage_path('app/public/listing_images');
+            if (!file_exists($dir)) mkdir($dir, 0755, true);
+            foreach ($request->file('images') as $image) {
+                if (!$image->isValid()) continue;
+                $orientation = 1;
+                if (function_exists('exif_read_data')) {
+                    $exif = @exif_read_data($image->getRealPath());
+                    $orientation = $exif['Orientation'] ?? 1;
+                }
+                $ext = strtolower($image->getClientOriginalExtension()) ?: 'jpg';
+                $filename = uniqid('img_', true) . '.' . $ext;
+                if (in_array($orientation, [3, 6, 8])) {
+                    $src = @imagecreatefromstring(file_get_contents($image->getRealPath()));
+                    if (!$src) continue;
+                    switch ($orientation) {
+                        case 3: $src = imagerotate($src, 180, 0); break;
+                        case 6: $src = imagerotate($src, -90, 0); break;
+                        case 8: $src = imagerotate($src, 90, 0); break;
+                    }
+                    $filename = uniqid('img_', true) . '.jpg';
+                    imagejpeg($src, $dir . '/' . $filename, 100);
+                    imagedestroy($src);
+                } else {
+                    $image->move($dir, $filename);
+                }
+                ListingImage::create(['listing_id' => $listing->id, 'image_path' => 'storage/listing_images/' . $filename]);
+            }
+        }
+
+        return redirect()->route('listing.show', $listing->id)->with('success', 'Sludinājums atjaunināts!');
+    }
+
     public function destroy(Listing $listing)
     {
-        // Noņemta īpašnieka pārbaude, lai nebloķētu dzēšanu
-        // Dzēš saistītās bildes no diska un datubāzes
+        if (Auth::id() !== $listing->user_id && !Auth::user()->is_admin) {
+            abort(403);
+        }
+
         foreach ($listing->images as $image) {
             Storage::delete(str_replace('storage/', 'public/', $image->image_path));
             $image->delete();
