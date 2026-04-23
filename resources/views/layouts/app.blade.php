@@ -23,20 +23,19 @@
 
         <nav class="header-nav" id="headerNav">
             <a href="/sludinajumi" class="nav-link">Sludinājumi</a>
-            @if(Auth::check())
+            @auth
                 <a href="/addListing" class="nav-link">Ievietot</a>
                 <a href="/katalogs" class="nav-link">Mans Katalogs</a>
-            @endif
-            @auth
-                <a href="/profile" class="nav-link profile-link" style="display:none;">
-                    <span class="profile-icon">👤</span>
-                    {{ Auth::user()->name }}
-                </a>
-                <form method="POST" action="{{ route('logout') }}" style="display:none;">
+                <a href="/profile" class="nav-link">👤 {{ Auth::user()->name }}</a>
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="btn-logout">Iziet</button>
+                    <button type="submit" class="btn-logout" style="background:none;border:none;cursor:pointer;color:inherit;font-size:inherit;padding:10px 0;">Iziet</button>
                 </form>
             @endauth
+            @guest
+                <a href="/registration" class="nav-link">Ielogoties</a>
+                <a href="/registration" class="nav-link">Reģistrēties</a>
+            @endguest
         </nav>
 
         <div class="header-actions">
