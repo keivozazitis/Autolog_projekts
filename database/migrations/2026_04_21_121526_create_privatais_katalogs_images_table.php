@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('privatais_katalogs_images')) {
+            return;
+        }
         Schema::create('privatais_katalogs_images', function (Blueprint $table) {
             $table->id();
             $table->foreignId('privatais_katalogs_id')->constrained('privatais_katalogs')->onDelete('cascade');
