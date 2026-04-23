@@ -6,6 +6,28 @@
 <div class="listings-page">
     <h1 class="page-heading">Sludinājumi</h1>
 
+    {{-- ── Sorting ── --}}
+    @php
+        $sortOptions = [
+            'newest'        => 'Jaunākie',
+            'price_asc'     => 'Cena ↑',
+            'price_desc'    => 'Cena ↓',
+            'year_desc'     => 'Gads ↓',
+            'year_asc'      => 'Gads ↑',
+            'mileage_asc'   => 'Nobraukums ↑',
+            'mileage_desc'  => 'Nobraukums ↓',
+        ];
+        $currentSort = request('sort', 'newest');
+    @endphp
+    <div class="sort-bar">
+        @foreach($sortOptions as $value => $label)
+            <a href="{{ request()->fullUrlWithQuery(['sort' => $value, 'page' => 1]) }}"
+               class="sort-pill {{ $currentSort === $value ? 'active' : '' }}">
+                {{ $label }}
+            </a>
+        @endforeach
+    </div>
+
     {{-- ── Filter dropdown ── --}}
     <div class="filter-dropdown" id="filterDropdown">
         <button class="filter-dropdown-toggle" id="filterToggleBtn" type="button">
@@ -13,8 +35,7 @@
         </button>
 
         <div class="filter-dropdown-content">
-            <section class="Auto-markas">
-                <form id="filter-form" method="GET" action="/sludinajumi">
+            <form id="filter-form" class="Auto-markas" method="GET" action="/sludinajumi">
                     {{-- Marka --}}
                     <div class="filter-group">
                         <label for="brand">Marka</label>
@@ -75,15 +96,26 @@
                     </div>
 
                     {{-- Gads --}}
-                    <div class="filter-group">
-                        <label for="year">Gads</label>
-                        <select name="year" id="year">
-                            <option value="">Visi gadi</option>
-                            @php $currentYear = date('Y'); @endphp
-                            @for ($y = $currentYear; $y >= 1950; $y--)
-                                <option value="{{ $y }}">{{ $y }}</option>
-                            @endfor
-                        </select>
+                    @php $currentYear = date('Y'); @endphp
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="year-from">Gads no</label>
+                            <select name="year-from" id="year-from">
+                                <option value="">Visi</option>
+                                @for ($y = $currentYear; $y >= 1950; $y--)
+                                    <option value="{{ $y }}" @selected(request('year-from') == $y)>{{ $y }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="year-to">Gads līdz</label>
+                            <select name="year-to" id="year-to">
+                                <option value="">Visi</option>
+                                @for ($y = $currentYear; $y >= 1950; $y--)
+                                    <option value="{{ $y }}" @selected(request('year-to') == $y)>{{ $y }}</option>
+                                @endfor
+                            </select>
+                        </div>
                     </div>
 
                     {{-- Cena --}}
@@ -150,11 +182,34 @@
                         </div>
                     </div>
 
+                    {{-- Nobraukums --}}
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="mileage-from">Nobraukums no (km)</label>
+                            <input type="number" id="mileage-from" name="mileage-from" placeholder="0" value="{{ request('mileage-from') }}">
+                        </div>
+                        <div class="filter-group">
+                            <label for="mileage-to">Nobraukums līdz (km)</label>
+                            <input type="number" id="mileage-to" name="mileage-to" placeholder="300000" value="{{ request('mileage-to') }}">
+                        </div>
+                    </div>
+
+                    {{-- Apskates vērtējums --}}
+                    <div class="filter-group">
+                        <label for="inspection-rating">Apskates vērtējums</label>
+                        <select id="inspection-rating" name="inspection-rating">
+                            <option value="">Visi</option>
+                            <option value="0" @selected(request('inspection-rating') === '0')>0 — Viss kārtībā</option>
+                            <option value="1" @selected(request('inspection-rating') === '1')>1 — Sīks trūkums</option>
+                            <option value="2" @selected(request('inspection-rating') === '2')>2 — Būtisks trūkums</option>
+                            <option value="3" @selected(request('inspection-rating') === '3')>3 — Bīstams trūkums</option>
+                        </select>
+                    </div>
+
                     <div class="filter-submit-row">
                         <button type="submit" class="button">Meklēt</button>
                     </div>
-                </form>
-            </section>
+            </form>
         </div>
     </div>
 

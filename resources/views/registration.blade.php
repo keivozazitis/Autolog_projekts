@@ -1,104 +1,96 @@
-<!DOCTYPE html>
-<html lang="lv">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login & Registration</title>
-    
-    @vite(['resources/css/register.css', 'resources/js/register.js', 'resources/js/validation.js'])
-</head>
-<body>
-    <div class="container">
-        <div id="LoginAndRegistrationForm">
-            <h1 id="formTitle">Ielogoties</h1>
-            
-            <div id="formSwitchBtn">
-                <button onclick="ShowLoginForm()" id="ShowLoginBtn" class="active">Ielogoties</button>
-                <button onclick="ShowRegistrationForm()" id="ShowRegistrationBtn">Reģistrēties</button>
-            </div>
+@extends('layouts.app')
 
-            {{-- LOGIN --}}
-            <div id="LoginFrom">
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
-                    <div class="center">
-                        <input id="LoginEmail" name="email" class="input-text" type="email" placeholder="E-pasta adrese" required value="{{ old('email') }}"> 
-                        <input id="LoginPassword" name="password" class="mt-10 input-text" type="password" placeholder="Parole" required>
-                    </div>
+@section('title', 'Ielogoties — AutoLog')
 
-                    <div class="forgot-pass-remember-me mt-10">
-                        <div class="remember-me">
-                            <input id="rememberMe" name="remember" type="checkbox" {{ old('remember') ? 'checked' : '' }}>
-                            <label for="rememberMe">Atcerēties mani</label>
-                        </div>
-                    </div>
+@section('content')
+<div class="form-page" style="max-width:420px;">
 
-                    {{-- Kļūdu paziņojums login formā --}}
-                    @if($errors->has('email'))
-                        <div class="error-message" style="color: red; margin-top: 10px;">
-                            {{ $errors->first('email') }}
-                        </div>
-                    @endif
+    <div class="form-card" style="padding:36px 32px;">
 
-                    <div class="center mt-20">
-                        <button type="submit" class="Submit-Btn">Ielogoties</button>
-                    </div>
-                </form>
-            </div>
-
-            {{-- REGISTRĀCIJA --}}
-            <div id="RegistrationFrom" style="display:none;">
-                <form method="POST" action="{{ route('register') }}">
-                    @csrf
-                    <div class="center">
-                        <input id="RegiName" name="name" class="input-text" type="text" placeholder="Vārds" required value="{{ old('name') }}">
-                        <input id="RegiEmailAddres" name="email" class="input-text mt-10" type="email" placeholder="E-pasta adrese" required value="{{ old('email') }}">
-                        <input id="RegiPassword" name="password" class="mt-10 input-text" type="password" placeholder="Parole" required>
-                        <input id="RegiConfirmPassword" name="password_confirmation" class="mt-10 input-text" type="password" placeholder="Apstiprini Paroli" required>
-                    </div>
-
-                    {{-- Kļūdu paziņojumi reģistrācijas formā --}}
-                    @if($errors->any())
-                        <div class="error-message" style="color: red; margin-top: 10px;">
-                            <ul style="margin: 0; padding-left: 20px;">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    <div class="center mt-20">
-                        <button type="submit" class="Submit-Btn">Reģistrēties</button>
-                    </div>
-                </form>
-            </div>
+        {{-- Tab poga --}}
+        <div style="display:flex; border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:28px; overflow:hidden;">
+            <button onclick="showTab('login')" id="tab-login"
+                    style="flex:1; padding:10px; background:var(--accent); color:var(--bg-primary); font-weight:600; font-size:0.875rem; border:none; cursor:pointer; transition:all 0.15s;">
+                Ielogoties
+            </button>
+            <button onclick="showTab('register')" id="tab-register"
+                    style="flex:1; padding:10px; background:transparent; color:var(--text-muted); font-weight:600; font-size:0.875rem; border:none; cursor:pointer; transition:all 0.15s;">
+                Reģistrēties
+            </button>
         </div>
+
+        {{-- LOGIN --}}
+        <div id="panel-login">
+            <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:22px; color:var(--text-primary);">Laipni lūdzam atpakaļ</h2>
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+                <div class="filter-group" style="margin-bottom:14px;">
+                    <label for="login-email">E-pasta adrese</label>
+                    <input type="email" id="login-email" name="email" placeholder="tavs@epasts.lv" required value="{{ old('email') }}">
+                </div>
+                <div class="filter-group" style="margin-bottom:18px;">
+                    <label for="login-password">Parole</label>
+                    <input type="password" id="login-password" name="password" placeholder="••••••••" required>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px;">
+                    <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }} style="accent-color:var(--accent);">
+                    <label for="remember" style="font-size:0.8rem; color:var(--text-muted); cursor:pointer;">Atcerēties mani</label>
+                </div>
+                @if($errors->has('email'))
+                    <p style="color:#e07070; font-size:0.8rem; margin-bottom:12px;">{{ $errors->first('email') }}</p>
+                @endif
+                <button type="submit" class="button" style="width:100%;">Ielogoties</button>
+            </form>
+        </div>
+
+        {{-- REĢISTRĀCIJA --}}
+        <div id="panel-register" style="display:none;">
+            <h2 style="font-size:1.3rem; font-weight:700; margin-bottom:22px; color:var(--text-primary);">Izveidot kontu</h2>
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+                <div class="filter-group" style="margin-bottom:14px;">
+                    <label for="reg-name">Vārds</label>
+                    <input type="text" id="reg-name" name="name" placeholder="Tavs vārds" required value="{{ old('name') }}">
+                </div>
+                <div class="filter-group" style="margin-bottom:14px;">
+                    <label for="reg-email">E-pasta adrese</label>
+                    <input type="email" id="reg-email" name="email" placeholder="tavs@epasts.lv" required value="{{ old('email') }}">
+                </div>
+                <div class="filter-group" style="margin-bottom:14px;">
+                    <label for="reg-password">Parole</label>
+                    <input type="password" id="reg-password" name="password" placeholder="••••••••" required>
+                </div>
+                <div class="filter-group" style="margin-bottom:20px;">
+                    <label for="reg-password-confirm">Apstiprini paroli</label>
+                    <input type="password" id="reg-password-confirm" name="password_confirmation" placeholder="••••••••" required>
+                </div>
+                @if($errors->any())
+                    <ul style="color:#e07070; font-size:0.8rem; margin-bottom:12px; padding-left:18px;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                @endif
+                <button type="submit" class="button" style="width:100%;">Reģistrēties</button>
+            </form>
+        </div>
+
     </div>
+</div>
 
-    <script>
-        function ShowLoginForm() {
-            document.getElementById('LoginFrom').style.display = 'block';
-            document.getElementById('RegistrationFrom').style.display = 'none';
-            document.getElementById('ShowLoginBtn').classList.add('active');
-            document.getElementById('ShowRegistrationBtn').classList.remove('active');
-            document.getElementById('formTitle').innerText = 'Ielogoties';
-        }
-        function ShowRegistrationForm() {
-            document.getElementById('LoginFrom').style.display = 'none';
-            document.getElementById('RegistrationFrom').style.display = 'block';
-            document.getElementById('ShowLoginBtn').classList.remove('active');
-            document.getElementById('ShowRegistrationBtn').classList.add('active');
-            document.getElementById('formTitle').innerText = 'Reģistrēties';
-        }
+<script>
+function showTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('panel-login').style.display    = isLogin ? 'block' : 'none';
+    document.getElementById('panel-register').style.display = isLogin ? 'none'  : 'block';
+    document.getElementById('tab-login').style.background    = isLogin ? 'var(--accent)' : 'transparent';
+    document.getElementById('tab-login').style.color         = isLogin ? 'var(--bg-primary)' : 'var(--text-muted)';
+    document.getElementById('tab-register').style.background = isLogin ? 'transparent' : 'var(--accent)';
+    document.getElementById('tab-register').style.color      = isLogin ? 'var(--text-muted)' : 'var(--bg-primary)';
+}
 
-        // Automātiski parāda reģistrācijas formu, ja ir reģistrācijas kļūdas
-        @if ($errors->any() && request()->routeIs('register'))
-            ShowRegistrationForm();
-        @endif
-    </script>
-</body>
-<footer style="text-align: center; padding: 20px; background-color: #f1f1f1; color: #333; margin-top: 40px; position:absolute; bottom: 0; width: 100%; box-sizing:border-box;">
-    &copy; {{ date('Y') }} AutoLog. Visas tiesības aizsargātas.
-</footer>
-</html>
+@if($errors->any())
+    showTab('register');
+@endif
+</script>
+@endsection

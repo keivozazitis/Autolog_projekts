@@ -63,6 +63,24 @@
 </header>
 
 <main class="site-main">
+    @if(session('success'))
+    <div class="flash-success" id="flash-msg">
+        {{ session('success') }}
+        <button onclick="document.getElementById('flash-msg').remove()" class="flash-close">&#x2715;</button>
+    </div>
+    @endif
+    @if(session('status'))
+    <div class="flash-success" id="flash-msg">
+        {{ session('status') }}
+        <button onclick="document.getElementById('flash-msg').remove()" class="flash-close">&#x2715;</button>
+    </div>
+    @endif
+    @if(session('error'))
+    <div class="flash-error" id="flash-msg-err">
+        {{ session('error') }}
+        <button onclick="document.getElementById('flash-msg-err').remove()" class="flash-close">&#x2715;</button>
+    </div>
+    @endif
     @yield('content')
 </main>
 
@@ -73,6 +91,17 @@
 </footer>
 
 @stack('scripts')
+<script>
+    // Auto-hide flash messages
+    ['flash-msg','flash-msg-err'].forEach(function(id) {
+        const el = document.getElementById(id);
+        if (el) setTimeout(function() {
+            el.style.transition = 'opacity 0.4s';
+            el.style.opacity = '0';
+            setTimeout(function() { el.remove(); }, 400);
+        }, 4000);
+    });
+</script>
 <script>
     const toggle = document.getElementById('mobileMenuToggle');
     const nav = document.getElementById('headerNav');

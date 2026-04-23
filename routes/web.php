@@ -48,6 +48,10 @@ Route::delete('/account/delete', [UserController::class, 'destroy'])
     ->middleware('auth')
     ->name('account.delete');
 
+Route::post('/profile/phone', [UserController::class, 'updatePhone'])
+    ->middleware('auth')
+    ->name('profile.phone');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/privatais', [PrivataisKatalogsController::class, 'index'])->name('privatais.index');
     Route::get('/privatais/create', [PrivataisKatalogsController::class, 'create'])->name('privatais.create');

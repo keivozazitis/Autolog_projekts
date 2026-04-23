@@ -747,7 +747,8 @@ body {
 .filter-group input[type="number"],
 .filter-group input[type="date"],
 .filter-group input[type="email"],
-.filter-group input[type="password"] {
+.filter-group input[type="password"],
+.filter-group input[type="tel"] {
     width: 100%;
     padding: 9px 12px;
     background: var(--bg-input);
@@ -1279,9 +1280,45 @@ body {
 }
 
 .filter-group input[type="file"] {
-    padding: 6px 10px;
+    display: none;
+}
+
+.file-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 28px 20px;
+    background: var(--bg-input);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
     cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    text-align: center;
+}
+
+.file-upload-label:hover {
+    border-color: var(--accent);
+    background: var(--bg-elevated);
+}
+
+.file-upload-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--text-muted);
+}
+
+.file-upload-text {
+    font-size: 0.875rem;
+    font-weight: 600;
     color: var(--text-secondary);
+}
+
+.file-upload-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
 }
 
 /* ════════════════════════════
@@ -1456,3 +1493,152 @@ body {
     .brand-cards { grid-template-columns: repeat(3, 1fr); gap: 14px; }
     .listings-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ── Flash messages ── */
+.flash-success,
+.flash-error {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    animation: flash-in 0.25s ease;
+}
+
+.flash-success {
+    background: #1a3a1a;
+    border: 1px solid #2d6a2d;
+    color: #7ecf7e;
+}
+
+.flash-error {
+    background: #3a1a1a;
+    border: 1px solid #6a2d2d;
+    color: #cf7e7e;
+}
+
+.flash-close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    padding: 0;
+    line-height: 1;
+}
+
+.flash-close:hover { opacity: 1; }
+
+@keyframes flash-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Sort bar ── */
+.sort-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.sort-pill {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.sort-pill:hover {
+    border-color: var(--border-light);
+    color: var(--text-primary);
+}
+
+.sort-pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-primary);
+    font-weight: 600;
+}
+
+/* ── Color swatch dropdown ── */
+.color-select {
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+.color-select-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    transition: border-color 0.15s;
+}
+.color-select.open .color-select-display,
+.color-select-display:hover {
+    border-color: var(--accent);
+}
+.color-select-arrow {
+    margin-left: auto;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+.color-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.12);
+    flex-shrink: 0;
+}
+.color-swatch-none {
+    background: transparent !important;
+    border: 1px dashed var(--border) !important;
+}
+.color-select-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    z-index: 200;
+    max-height: 260px;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+}
+.color-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    transition: background 0.1s;
+}
+.color-option:hover {
+    background: var(--bg-input);
+}
+

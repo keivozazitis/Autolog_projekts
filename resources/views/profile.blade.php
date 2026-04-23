@@ -21,6 +21,22 @@
 
         <div class="profile-divider"></div>
 
+        {{-- Tālruņa numurs --}}
+        <div style="width:100%; text-align:left;">
+            <p style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px;">Tālruņa numurs</p>
+            @if(session('phone_saved'))
+                <p style="color:#5cb85c; font-size:0.8rem; margin-bottom:8px;">{{ session('phone_saved') }}</p>
+            @endif
+            <form method="POST" action="{{ route('profile.phone') }}" style="display:flex; gap:8px;">
+                @csrf
+                <input type="tel" name="phone" value="{{ Auth::user()->phone }}" placeholder="Ievadiet savu tālruņa numuru"
+                       style="flex:1; padding:9px 12px; background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text-primary); font-size:0.875rem;">
+                <button type="submit" class="button btn-secondary" style="white-space:nowrap;">Saglabāt</button>
+            </form>
+        </div>
+
+        <div class="profile-divider"></div>
+
         <div class="danger-zone">
             <p class="danger-zone-title">Bīstamā zona</p>
             <p class="danger-zone-desc">

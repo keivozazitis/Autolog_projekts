@@ -36,8 +36,13 @@
 
                 {{-- Jaunas bildes --}}
                 <div class="filter-group full-width">
-                    <label for="images">Pievienot jaunas bildes</label>
-                    <input type="file" id="images" name="images[]" accept="image/*" multiple>
+                    <label>Pievienot jaunas bildes</label>
+                    <label class="file-upload-label" for="images">
+                        <span class="file-upload-icon">&#8679;</span>
+                        <span class="file-upload-text" id="file-upload-text">Izvēlies bildes vai ievelc šeit</span>
+                        <span class="file-upload-hint">PNG, JPG, WEBP — līdz 15 MB katrai</span>
+                        <input type="file" id="images" name="images[]" accept="image/*" multiple>
+                    </label>
                     <div class="image-previews" id="preview-container"></div>
                 </div>
 
@@ -54,7 +59,7 @@
 
                 <div class="filter-group">
                     <label for="model">Modelis *</label>
-                    <select id="model" name="model" required>
+                    <select id="model" name="model" required data-current-model="{{ $listing->model }}">
                         <option value="{{ $listing->model }}" selected>{{ $listing->model }}</option>
                     </select>
                 </div>
@@ -118,8 +123,21 @@
                 </div>
 
                 <div class="filter-group">
-                    <label for="color">Krāsa</label>
-                    <input type="text" id="color" name="color" value="{{ $listing->color }}">
+                    <label>Krāsa</label>
+                    <div class="color-select" id="color-select" data-value="{{ $listing->color }}">
+                        <div class="color-select-display">
+                            <span class="color-swatch" id="color-swatch-preview" style="display:none;"></span>
+                            <span id="color-select-label" style="color:var(--text-muted);">Izvēlies krāsu</span>
+                            <span class="color-select-arrow">&#9662;</span>
+                        </div>
+                        <div class="color-select-dropdown" id="color-select-dropdown" style="display:none;"></div>
+                    </div>
+                    <input type="hidden" id="color-input" name="color">
+                </div>
+
+                <div class="filter-group">
+                    <label for="phone">Tālruņa numurs *</label>
+                    <input type="tel" id="phone" name="phone" value="{{ $listing->phone }}" placeholder="20 123 456" required>
                 </div>
 
                 <div class="filter-group">
@@ -180,11 +198,20 @@ document.querySelector('form').addEventListener('submit', function() {
     btn.style.cursor = 'not-allowed';
 });
 
+const dt = new DataTransfer();
 document.getElementById('images').addEventListener('change', function(e) {
+    Array.from(e.target.files).forEach(f => dt.items.add(f));
+    if (dt.files.length > 10) {
+        alert('Maksimāli 10 bildes atļautas.');
+        while (dt.items.length > 10) dt.items.remove(dt.items.length - 1);
+    }
+    e.target.files = dt.files;
     const container = document.getElementById('preview-container');
+    const label = document.getElementById('file-upload-text');
     container.innerHTML = '';
-    Array.from(e.target.files).forEach(file => {
-        if (!file.type.startsWith('image/')) return;
+    const files = Array.from(dt.files).filter(f => f.type.startsWith('image/'));
+    label.textContent = files.length + ' bilde(-s) izvēlēta(-s)';
+    files.forEach(file => {
         const reader = new FileReader();
         reader.onload = ev => {
             const img = document.createElement('img');

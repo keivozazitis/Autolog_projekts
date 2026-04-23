@@ -23,8 +23,15 @@ class Listing extends Model
         'description',
         'prev_inspection_rating',
         'prev_inspection_problem',
+        'prev_inspection_ratings',
         'user_id',
+        'phone',
     ];
+
+    protected $casts = [
+        'prev_inspection_ratings' => 'array',
+    ];
+
     public function images()
     {
         return $this->hasMany(ListingImage::class);

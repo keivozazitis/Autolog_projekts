@@ -18,6 +18,13 @@ class UserController extends Controller
         return view('user.profile', compact('user', 'listings'));
     }
 
+    public function updatePhone(Request $request)
+    {
+        $request->validate(['phone' => ['nullable', 'string', 'max:30']]);
+        Auth::user()->update(['phone' => $request->input('phone') ?: null]);
+        return back()->with('phone_saved', 'Tālrunis saglabāts.');
+    }
+
     public function destroy(Request $request)
     {
         $user = Auth::user();

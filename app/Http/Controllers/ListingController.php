@@ -7,65 +7,16 @@ use App\Models\Listing;
 use App\Models\ListingImage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 
 class ListingController extends Controller
 {
     public function store(Request $request)
     {
-        $carModels = [
-            'alfaromeo' => ["Giulia", "Stelvio", "MiTo"],
-            'audi' => ["A3", "A4", "A6"],
-            'bmw' => ["3 Series", "5 Series", "X5"],
-            'chevrolet' => ["Camaro", "Malibu", "Tahoe"],
-            'chrysler' => ["300", "Pacifica", "Voyager"],
-            'citroen' => ["C3", "C4", "Berlingo"],
-            'cupra' => ["Formentor", "Leon", "Born"],
-            'dacia' => ["Duster", "Sandero", "Logan"],
-            'dodge' => ["Charger", "Challenger", "Durango"],
-            'fiat' => ["500", "Panda", "Tipo"],
-            'ford' => ["Focus", "Mondeo", "Kuga"],
-            'honda' => ["Civic", "Accord", "CR-V"],
-            'hyundai' => ["i30", "Tucson", "Santa Fe"],
-            'infiniti' => ["Q50", "QX50", "QX60"],
-            'jaguar' => ["XE", "F-Pace", "XF"],
-            'jeep' => ["Wrangler", "Grand Cherokee", "Compass"],
-            'kia' => ["Ceed", "Sportage", "Sorento"],
-            'lancia' => ["Ypsilon", "Delta", "Thema"],
-            'landrover' => ["Discovery", "Range Rover", "Defender"],
-            'lexus' => ["IS", "RX", "NX"],
-            'mazda' => ["3", "6", "CX-5"],
-            'mercedes' => ["C-Class", "E-Class", "GLC"],
-            'mini' => ["Cooper", "Countryman", "Clubman"],
-            'mitsubishi' => ["Outlander", "ASX", "Eclipse Cross"],
-            'nissan' => ["Qashqai", "X-Trail", "Leaf"],
-            'opel' => ["Corsa", "Astra", "Insignia"],
-            'peugeot' => ["208", "3008", "5008"],
-            'porsche' => ["911", "Cayenne", "Panamera"],
-            'renault' => ["Clio", "Megane", "Captur"],
-            'saab' => ["9-3", "9-5", "900"],
-            'seat' => ["Ibiza", "Leon", "Ateca"],
-            'skoda' => ["Octavia", "Fabia", "Kodiaq"],
-            'smart' => ["ForTwo", "ForFour", "EQ ForTwo"],
-            'subaru' => ["Impreza", "Forester", "Outback"],
-            'suzuki' => ["Swift", "Vitara", "SX4 S-Cross"],
-            'tesla' => ["Model S", "Model 3", "Model X"],
-            'toyota' => ["Corolla", "Camry", "RAV4"],
-            'volkswagen' => ["Golf", "Passat", "Tiguan"],
-            'volvo' => ["XC60", "XC90", "S60"],
-            'gaz' => ["Gazelle", "Volga", "Sobol"],
-            'uaz' => ["Hunter", "Patriot", "Bukhanka"],
-            'vaz' => ["2101", "2107", "Niva"]
-        ];
-
-        $brand = $request->input('brand');
-        $allowedModels = $carModels[$brand] ?? [];
-
         try {
             $validated = $request->validate([
                 'brand' => ['required', 'string', 'max:255'],
-                'model' => ['required', 'string', 'max:255', Rule::in($allowedModels)],
+                'model' => ['required', 'string', 'max:255'],
                 'year' => ['required', 'integer', 'min:1950', 'max:' . (date('Y') + 1)],
                 'price' => ['required', 'numeric', 'min:0'],
                 'body_type' => ['nullable', 'string'],
@@ -77,18 +28,27 @@ class ListingController extends Controller
                 'license_plate' => ['nullable', 'string'],
                 'vin' => ['nullable', 'string'],
                 'next_inspection' => ['nullable', 'date'],
+                'phone' => ['required', 'string', 'max:30'],
                 'description' => ['nullable', 'string'],
+                'prev_inspection_rating' => ['nullable', 'integer', 'min:0', 'max:3'],
+                'prev_inspection_rating_extra' => ['nullable', 'array'],
+                'prev_inspection_rating_extra.*' => ['nullable', 'integer', 'min:0', 'max:3'],
                 'prev_inspection_problem' => ['nullable', 'array'],
                 'prev_inspection_problem.*' => ['string'],
-                'images.*' => ['nullable', 'image', 'max:15360'], // max 15MB per image
+                'images' => ['nullable', 'array', 'max:10'],
+                'images.*' => ['nullable', 'image', 'max:15360'],
             ], [
-                'model.in' => 'Izvēlētais modelis nav derīgs izvēlētajai markai.',
                 'price.decimal' => 'Cenai jābūt ar 2 zīmēm aiz komata.',
                 'images.*.image' => 'Katrai augšupielādētajai bildei jābūt attēla formātā.',
                 'images.*.max' => 'Bildei jābūt mazākai par 15MB.'
             ]);
 
             $validated['prev_inspection_problem'] = implode(', ', $validated['prev_inspection_problem'] ?? []);
+            $validated['prev_inspection_ratings'] = self::buildRatingCounts(
+                $validated['prev_inspection_rating'] ?? null,
+                $validated['prev_inspection_rating_extra'] ?? []
+            );
+            unset($validated['prev_inspection_rating_extra']);
             $validated['user_id'] = Auth::id();
             $listing = Listing::create($validated);
             Log::info('Listing izveidots ar ID: ' . $listing->id);
@@ -155,8 +115,12 @@ class ListingController extends Controller
         $query->where('model', $request->model);
     }
 
-    if ($request->filled('year')) {
-        $query->where('year', $request->year);
+    if ($request->filled('year-from')) {
+        $query->where('year', '>=', $request->input('year-from'));
+    }
+
+    if ($request->filled('year-to')) {
+        $query->where('year', '<=', $request->input('year-to'));
     }
 
     if ($request->filled('price-from')) {
@@ -187,7 +151,38 @@ class ListingController extends Controller
         $query->where('engine_volume', '<=', $request->input('engine-volume-to'));
     }
 
-    $listings = $query->latest()->paginate(12)->withQueryString();
+    if ($request->filled('mileage-from')) {
+        $query->where('mileage', '>=', $request->input('mileage-from'));
+    }
+
+    if ($request->filled('mileage-to')) {
+        $query->where('mileage', '<=', $request->input('mileage-to'));
+    }
+
+    if ($request->has('inspection-rating') && $request->input('inspection-rating') !== '') {
+        $rating = $request->input('inspection-rating');
+        $query->where(function ($q) use ($rating) {
+            $q->where(function ($q2) use ($rating) {
+                $q2->whereNotNull('prev_inspection_ratings')
+                   ->where('prev_inspection_ratings', 'LIKE', '%"' . $rating . '":%');
+            })->orWhere(function ($q2) use ($rating) {
+                $q2->whereNull('prev_inspection_ratings')
+                   ->where('prev_inspection_rating', $rating);
+            });
+        });
+    }
+
+    match($request->input('sort', 'newest')) {
+        'price_asc'    => $query->orderBy('price', 'asc'),
+        'price_desc'   => $query->orderBy('price', 'desc'),
+        'year_desc'    => $query->orderBy('year', 'desc'),
+        'year_asc'     => $query->orderBy('year', 'asc'),
+        'mileage_asc'  => $query->orderBy('mileage', 'asc'),
+        'mileage_desc' => $query->orderBy('mileage', 'desc'),
+        default        => $query->latest(),
+    };
+
+    $listings = $query->paginate(12)->withQueryString();
 
     return view('sludinajumi', compact('listings'));
 }
@@ -212,34 +207,9 @@ class ListingController extends Controller
             abort(403);
         }
 
-        $carModels = [
-            'alfaromeo' => ["Giulia","Stelvio","MiTo"],'audi' => ["A3","A4","A6"],
-            'bmw' => ["3 Series","5 Series","X5"],'chevrolet' => ["Camaro","Malibu","Tahoe"],
-            'chrysler' => ["300","Pacifica","Voyager"],'citroen' => ["C3","C4","Berlingo"],
-            'cupra' => ["Formentor","Leon","Born"],'dacia' => ["Duster","Sandero","Logan"],
-            'dodge' => ["Charger","Challenger","Durango"],'fiat' => ["500","Panda","Tipo"],
-            'ford' => ["Focus","Mondeo","Kuga"],'honda' => ["Civic","Accord","CR-V"],
-            'hyundai' => ["i30","Tucson","Santa Fe"],'infiniti' => ["Q50","QX50","QX60"],
-            'jaguar' => ["XE","F-Pace","XF"],'jeep' => ["Wrangler","Grand Cherokee","Compass"],
-            'kia' => ["Ceed","Sportage","Sorento"],'lancia' => ["Ypsilon","Delta","Thema"],
-            'landrover' => ["Discovery","Range Rover","Defender"],'lexus' => ["IS","RX","NX"],
-            'mazda' => ["3","6","CX-5"],'mercedes' => ["C-Class","E-Class","GLC"],
-            'mini' => ["Cooper","Countryman","Clubman"],'mitsubishi' => ["Outlander","ASX","Eclipse Cross"],
-            'nissan' => ["Qashqai","X-Trail","Leaf"],'opel' => ["Corsa","Astra","Insignia"],
-            'peugeot' => ["208","3008","5008"],'porsche' => ["911","Cayenne","Panamera"],
-            'renault' => ["Clio","Megane","Captur"],'saab' => ["9-3","9-5","900"],
-            'seat' => ["Ibiza","Leon","Ateca"],'skoda' => ["Octavia","Fabia","Kodiaq"],
-            'smart' => ["ForTwo","ForFour","EQ ForTwo"],'subaru' => ["Impreza","Forester","Outback"],
-            'suzuki' => ["Swift","Vitara","SX4 S-Cross"],'tesla' => ["Model S","Model 3","Model X"],
-            'toyota' => ["Corolla","Camry","RAV4"],'volkswagen' => ["Golf","Passat","Tiguan"],
-            'volvo' => ["XC60","XC90","S60"],'gaz' => ["Gazelle","Volga","Sobol"],
-            'uaz' => ["Hunter","Patriot","Bukhanka"],'vaz' => ["2101","2107","Niva"],
-        ];
-        $allowedModels = $carModels[$request->input('brand')] ?? [];
-
         $validated = $request->validate([
             'brand'       => ['required','string','max:255'],
-            'model'       => ['required','string','max:255', Rule::in($allowedModels)],
+            'model'       => ['required','string','max:255'],
             'year'        => ['required','integer','min:1950','max:'.(date('Y')+1)],
             'price'       => ['required','numeric','min:0'],
             'body_type'   => ['nullable','string'],
@@ -251,11 +221,32 @@ class ListingController extends Controller
             'license_plate'=> ['nullable','string'],
             'vin'         => ['nullable','string'],
             'next_inspection'=> ['nullable','date'],
+            'phone' => ['required', 'string', 'max:30'],
             'description' => ['nullable','string'],
+            'prev_inspection_rating' => ['nullable','integer','min:0','max:3'],
+            'prev_inspection_rating_extra' => ['nullable','array'],
+            'prev_inspection_rating_extra.*' => ['nullable','integer','min:0','max:3'],
+            'prev_inspection_problem' => ['nullable','array'],
+            'prev_inspection_problem.*' => ['string'],
+            'images'      => ['nullable','array'],
             'images.*'    => ['nullable','image','max:65536'],
             'remove_images' => ['nullable','array'],
             'remove_images.*' => ['integer'],
         ]);
+
+        $removing = count($validated['remove_images'] ?? []);
+        $adding   = count(array_filter($request->file('images') ?? []));
+        $existing = $listing->images()->count();
+        if (($existing - $removing + $adding) > 10) {
+            return back()->withErrors(['images' => 'Sludinājumam var būt maksimāli 10 bildes.']);
+        }
+
+        $validated['prev_inspection_problem'] = implode(', ', $validated['prev_inspection_problem'] ?? []);
+        $validated['prev_inspection_ratings'] = self::buildRatingCounts(
+            $validated['prev_inspection_rating'] ?? null,
+            $validated['prev_inspection_rating_extra'] ?? []
+        );
+        unset($validated['prev_inspection_rating_extra']);
 
         $listing->update(\Illuminate\Support\Arr::except($validated, ['images','remove_images']));
 
@@ -315,5 +306,20 @@ class ListingController extends Controller
         $listing->delete();
 
         return redirect('/sludinajumi')->with('success', 'Sludinājums izdzēsts veiksmīgi!');
+    }
+
+    private static function buildRatingCounts(?int $main, array $extras): ?array
+    {
+        $all = array_filter(
+            array_merge($main !== null ? [$main] : [], $extras),
+            fn($r) => $r !== null && $r !== ''
+        );
+        if (empty($all)) return null;
+        $counts = [];
+        foreach ($all as $r) {
+            $key = (string)(int)$r;
+            $counts[$key] = ($counts[$key] ?? 0) + 1;
+        }
+        return $counts;
     }
 }

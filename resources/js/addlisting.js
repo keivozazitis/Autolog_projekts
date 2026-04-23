@@ -91,10 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
       sel.name = 'prev_inspection_rating_extra[]';
       sel.classList.add('rating-extra');
       sel.innerHTML = `
-        <option value="">Izvēlies līmeni</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
+        <option value="">Pievienot vēl vienu vērtējumu</option>
+        <option value="0">0 — Viss kārtībā (bez defektiem)</option>
+        <option value="1">1 — Sīks trūkums vai bojājums</option>
+        <option value="2">2 — Būtisks trūkums vai bojājums</option>
+        <option value="3">3 — Bīstams trūkums vai bojājums</option>
       `;
       return sel;
     }
@@ -126,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
       // If last is a rating-extra and has a value, append a problem-select for it
       if (sel.classList.contains('rating-extra') &&
-          sel === last && sel.value !== '') {
+          sel === last && sel.value !== '' && sel.value !== '0') {
         const nextProb = makeProblemSelect(sel.value);
         container.appendChild(nextProb);
       }

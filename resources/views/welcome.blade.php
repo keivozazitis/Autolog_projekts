@@ -7,12 +7,12 @@
     <div class="hero-bg-grid"></div>
 
     <div class="hero-content">
-        <div class="hero-badge">&#x1F697; Latvijas automašīnu tirgus</div>
+        <div class="hero-badge"> Latvijas lielākais auto tirgus</div>
         <h1 class="hero-title">
-            Atrodi savu<br><span class="accent">sapņu auto</span>
+            Tavs nākamais<br><span class="accent">auto ir šeit</span>
         </h1>
         <p class="hero-subtitle">
-            Tūkstošiem verificētu sludinājumu. Meklē pēc markas, cenas un gada.
+            Pārdod ātri. Pērc droši. Viss vienā vietā.
         </p>
     </div>
 

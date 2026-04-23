@@ -49,8 +49,8 @@ document.addEventListener('keydown', e => {
         <div class="price-tag">€{{ number_format($listing->price, 2) }}</div>
     </div>
 
-    @if($listing->user)
-    <div style="margin-bottom:20px;">
+    <div style="margin-bottom:20px; display:flex; align-items:center; flex-wrap:wrap; gap:16px;">
+        @if($listing->user)
         <a href="{{ route('user.profile', $listing->user->id) }}"
            style="display:inline-flex; align-items:center; gap:10px; text-decoration:none; color:var(--text-secondary); font-size:0.875rem; transition:color 0.15s;"
            onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
@@ -59,8 +59,16 @@ document.addEventListener('keydown', e => {
             </span>
             {{ $listing->user->name }}
         </a>
+        @endif
+        @if($listing->phone)
+        <a href="tel:{{ $listing->phone }}"
+           style="display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--text-secondary); font-size:0.875rem; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-sm); padding:6px 14px; transition:all 0.15s;"
+           onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text-primary)'"
+           onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+            &#128222; {{ $listing->phone }}
+        </a>
+        @endif
     </div>
-    @endif
 
     {{-- ── Pamatinformācija ── --}}
     <div class="details-card">
@@ -156,33 +164,112 @@ document.addEventListener('keydown', e => {
     </div>
 
     {{-- ── Tehniskā apskate ── --}}
+    @php
+    $ratingLabels = [
+        '0' => 'Viss kārtībā (bez defektiem)',
+        '1' => 'Sīks trūkums vai bojājums',
+        '2' => 'Būtisks trūkums vai bojājums',
+        '3' => 'Bīstams trūkums vai bojājums',
+    ];
+    $problemLabels = [
+        'numura_zimes_apgaismojums'  => 'Numura zīmes apgaismojums nedarbojas',
+        'luktura_stikla_bojajums'    => 'Neliels luktura stikla bojājums',
+        'lukturu_regulejums'         => 'Lukturu regulējums nedaudz neatbilst normām',
+        'ellas_svisana'              => 'Neliela eļļas svīšana no dzinēja',
+        'riepu_nodilums'             => 'Neliels riepu nodilums',
+        'bremzu_disku_nodilums'      => 'Neliels bremžu disku nodilums',
+        'korozija_virsbuve'          => 'Neliela korozija uz virsbūves elementiem',
+        'brivkustiba_balstiekarta'   => 'Neliela brīvkustība balstiekārtas savienojumos',
+        'salona_bojajumi'            => 'Salona aprīkojuma bojājumi',
+        'izpludes_stiprinajums'      => 'Neliels izplūdes sistēmas stiprinājuma bojājums',
+        'logu_tiritalji'             => 'Logu tīrītāju darbība nepietiekama',
+        'stikla_bojajums'            => 'Neliels stikla bojājums ārpus redzamības zonas',
+        'dzesesanas_noplude'         => 'Neliela dzesēšanas šķidruma noplūde',
+        'degvielas_svisana'          => 'Neliela degvielas sistēmas svīšana',
+        'troksna_parsneigums'        => 'Neliels trokšņa līmeņa pārsniegums',
+        'vibracija_bremzesana'       => 'Neliela vibrācija bremzēšanas laikā',
+        'amortizatora_samazinajums'  => 'Neliels amortizatora efektivitātes samazinājums',
+        'elektroinstalacija_izolacija' => 'Neliela elektroinstalācijas izolācijas bojājuma pazīme',
+        'papildaprikojums_nepilnigas'=> 'Papildaprīkojums uzstādīts ar nebūtiskām nepilnībām',
+        'virsbuve_deformacija'       => 'Neliela virsbūves deformācija bez ietekmes uz drošību',
+        'bremzu_speks_nepietiekams'  => 'Bremžu spēks nepietiekams',
+        'nevienmerigas_bremzes'      => 'Nevienmērīga bremzēšana uz vienas ass',
+        'rokas_bremze'               => 'Rokas bremze nedarbojas efektīvi',
+        'lukturu_regulejums_butisks' => 'Lukturu regulējums būtiski neatbilst normām',
+        'tuvais_lukturis_nedarbojas' => 'Nestrādā viens no tuvās gaismas lukturiem',
+        'pagrieziena_raditajs'       => 'Pagrieziena rādītājs nedarbojas',
+        'riepu_protektors_zem_normas'=> 'Riepu protektora dziļums zem minimālās normas',
+        'riepa_bojata'               => 'Riepa bojāta (plaisa vai izspiedums)',
+        'stūres_brivkustiba'         => 'Stūres mehānismā pārmērīga brīvkustība',
+        'amortizators_nepietiekams'  => 'Amortizatora darbība nepietiekama',
+        'lodbalsts_nodilums'         => 'Lodbalsts ar pārmērīgu nodilumu',
+        'izpludes_emisija'           => 'Izplūdes gāzu emisija pārsniedz normu',
+        'dumainiba'                  => 'Dūmainība pārsniedz pieļaujamo līmeni',
+        'izpludes_sistema_bojata'    => 'Izplūdes sistēma bojāta vai nehermētiska',
+        'vejstikls_bojats'           => 'Vējstikls bojāts redzamības zonā',
+        'logu_tiritalji_nedarbojas'  => 'Logu tīrītāji nedarbojas',
+        'drosibas_josta'             => 'Drošības josta bojāta vai nedarbojas',
+        'degvielas_noplude'          => 'Degvielas sistēmas noplūde',
+        'ellas_noplude'              => 'Eļļas noplūde no dzinēja',
+        'nesoso_elementu_korozija'   => 'Nesošo elementu korozija',
+        'bremzu_sistema_nedarbojas'  => 'Bremžu sistēma nedarbojas',
+        'bremzu_skiduma_noplude'     => 'Bremžu šķidruma intensīva noplūde',
+        'bremzu_speka_neesamiba'     => 'Pilnīga bremžu spēka neesamība uz ass',
+        'stūres_mehānisma_bojajums'  => 'Stūres mehānisma bojājums',
+        'stūres_vadamiba'            => 'Stūres vadāmība apdraudēta',
+        'ritenis_nenostiprināts'     => 'Ritenis nav droši nostiprināts',
+        'riepa_kritisks_bojajums'    => 'Riepa ar kritisku bojājumu (plīsuma risks)',
+        'atsperes_luzums'            => 'Atsperes lūzums',
+        'balstiekarta_atvienota'     => 'Balstiekārtas detaļa atvienota vai salūzusi',
+        'ramis_kritiski_bojats'      => 'Rāmis vai nesošā konstrukcija kritiski bojāta',
+        'degviela_aizdegšanas_risks' => 'Degvielas noplūde ar aizdegšanās risku',
+        'izpludes_atdalita'          => 'Izplūdes sistēma atdalīta vai nokritusi',
+        'redzamiba_ierobezota'       => 'Redzamība būtiski ierobežota',
+        'durvis_neaizveras'          => 'Vadītāja durvis nevar droši aizvērt',
+        'drosibas_josta_kritiski'    => 'Drošības josta nedarbojas kritiski',
+        'kravas_nostiprinas_bistams' => 'Kravas nostiprinājums bīstams satiksmei',
+        'tiess_apdraudejums'         => 'Transportlīdzeklis rada tiešu apdraudējumu satiksmei',
+        'konstrukcijas_bojajums'     => 'Būtisks konstrukcijas bojājums',
+        'elektriba_aizdegšanas_risks'=> 'Elektriskās sistēmas bojājums ar aizdegšanās risku',
+        'stavoklis_bistams'          => 'Transportlīdzekļa tehniskais stāvoklis bīstams ekspluatācijai',
+    ];
+    $problems = $listing->prev_inspection_problem
+        ? array_filter(array_map('trim', explode(',', $listing->prev_inspection_problem)))
+        : [];
+    $ratingCounts = $listing->prev_inspection_ratings ?: null;
+    @endphp
     <div class="details-card">
         <h2 class="details-title">Tehniskā apskate</h2>
         <div class="spec-grid">
-            <div class="spec-item">
+            <div class="spec-item" style="grid-column: 1 / -1;">
                 <span class="spec-label">Iepriekšējās apskates vērtējums</span>
-                @if($listing->prev_inspection_rating)
-                    <div class="inspection-rating" style="margin-top:6px;">
-                        <div class="rating-circle rating-{{ $listing->prev_inspection_rating }}">
-                            {{ $listing->prev_inspection_rating }}
-                        </div>
-                        <span class="spec-value">
-                            @if($listing->prev_inspection_rating == 0) Viss kārtībā (bez defektiem)
-                            @elseif($listing->prev_inspection_rating == 1) Sīks trūkums vai bojājums
-                            @elseif($listing->prev_inspection_rating == 2) Būtisks trūkums vai bojājums
-                            @else Bīstams trūkums vai bojājums
+                @if($ratingCounts && array_sum($ratingCounts) > 0)
+                    <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                        @foreach(['0','1','2','3'] as $level)
+                            @if(!empty($ratingCounts[$level]))
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div class="rating-circle rating-{{ $level }}" style="flex-shrink:0;">{{ $level }}</div>
+                                <span class="spec-value" style="flex:1;">{{ $ratingLabels[$level] }}</span>
+                                <span style="background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-sm); padding:2px 10px; font-size:0.8rem; color:var(--text-muted); font-weight:600;">
+                                    {{ $ratingCounts[$level] }}×
+                                </span>
+                            </div>
                             @endif
-                        </span>
+                        @endforeach
                     </div>
                 @else
-                    <span class="spec-value">Nav norādīts</span>
+                    <span class="spec-value" style="margin-top:6px; display:inline-block;">Nav norādīts</span>
                 @endif
             </div>
 
-            @if($listing->prev_inspection_problem)
-            <div class="spec-item">
+            @if(count($problems))
+            <div class="spec-item" style="grid-column: 1 / -1;">
                 <span class="spec-label">Konstatētās nepilnības</span>
-                <span class="spec-value">{{ $listing->prev_inspection_problem }}</span>
+                <ul style="margin:8px 0 0; padding-left:18px; color:var(--text-secondary); font-size:0.875rem; line-height:1.8;">
+                    @foreach($problems as $p)
+                        <li>{{ $problemLabels[$p] ?? $p }}</li>
+                    @endforeach
+                </ul>
             </div>
             @endif
         </div>

@@ -16,6 +16,14 @@
         <p style="color:var(--text-muted); font-size:0.85rem; margin-top:8px;">
             {{ $listings->count() }} {{ $listings->count() === 1 ? 'sludinājums' : 'sludinājumi' }}
         </p>
+        @if($user->phone)
+        <a href="tel:{{ $user->phone }}"
+           style="display:inline-flex; align-items:center; gap:8px; margin-top:14px; text-decoration:none; color:var(--text-secondary); font-size:0.875rem; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-sm); padding:7px 16px; transition:all 0.15s;"
+           onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text-primary)'"
+           onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+            &#128222; {{ $user->phone }}
+        </a>
+        @endif
     </div>
 
     <div class="listings-page" style="padding:0; margin-top:40px;">
