@@ -46,7 +46,7 @@
                         {{ $listing->brand }} {{ $listing->model }}
                         <span class="listing-card-year">({{ $listing->year }})</span>
                     </h3>
-                    <div class="listing-card-price">€{{ number_format($listing->price, 2) }}</div>
+                    <div class="listing-card-price">€{{ number_format($listing->price, 0) }}</div>
                     <div class="listing-card-actions">
                         <a href="{{ route('listing.show', $listing->id) }}" style="flex:1;">
                             <button type="button" class="button" style="width:100%;">Apskatīt</button>

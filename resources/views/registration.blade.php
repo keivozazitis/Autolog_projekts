@@ -91,6 +91,9 @@ function showTab(tab) {
 
 @if($errors->any())
     showTab('register');
+@else
+    const urlTab = new URLSearchParams(window.location.search).get('tab');
+    if (urlTab === 'register') showTab('register');
 @endif
 </script>
 @endsection

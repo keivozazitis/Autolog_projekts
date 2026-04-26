@@ -49,7 +49,16 @@ class ListingController extends Controller
                 $validated['prev_inspection_rating_extra'] ?? []
             );
             unset($validated['prev_inspection_rating_extra']);
-            $validated['user_id'] = Auth::id();
+            $user = Auth::user();
+            if (!$user->subscribed('default')) {
+                $count = Listing::where('user_id', $user->id)->count();
+                if ($count >= 1) {
+                    return redirect()->route('subscription.upgrade')
+                        ->with('limit', 'Bezmaksas kontam ir 1 sludinājuma limits. Jaunina uz AutoPlacis!');
+                }
+            }
+
+            $validated['user_id'] = $user->id;
             $listing = Listing::create($validated);
             Log::info('Listing izveidots ar ID: ' . $listing->id);
 
@@ -229,7 +238,7 @@ class ListingController extends Controller
             'prev_inspection_problem' => ['nullable','array'],
             'prev_inspection_problem.*' => ['string'],
             'images'      => ['nullable','array'],
-            'images.*'    => ['nullable','image','max:65536'],
+            'images.*'    => ['nullable','image','max:15360'],
             'remove_images' => ['nullable','array'],
             'remove_images.*' => ['integer'],
         ]);

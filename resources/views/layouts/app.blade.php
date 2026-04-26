@@ -25,12 +25,14 @@
             <a href="/sludinajumi" class="nav-link">Sludinājumi</a>
             @auth
                 <a href="/addListing" class="nav-link">Ievietot</a>
-                <a href="/katalogs" class="nav-link">Mans Katalogs</a>
-                <a href="/profile" class="nav-link">👤 {{ Auth::user()->name }}</a>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="btn-logout" style="background:none;border:none;cursor:pointer;color:inherit;font-size:inherit;padding:10px 0;">Iziet</button>
-                </form>
+                <a href="{{ route('privatais.index') }}" class="nav-link">Mans Katalogs</a>
+                @php $unread = \App\Models\Message::where('receiver_id', Auth::id())->whereNull('read_at')->count(); @endphp
+                <a href="{{ route('messages.inbox') }}" class="nav-link nav-link-chat">
+                    Čats
+                    @if($unread > 0)
+                        <span class="chat-bubble">{{ $unread }}</span>
+                    @endif
+                </a>
             @endauth
             @guest
                 <a href="/registration" class="nav-link">Ielogoties</a>
@@ -51,7 +53,7 @@
             @endauth
             @guest
                 <a href="/registration" class="btn-outline">Ielogoties</a>
-                <a href="/registration" class="btn-primary">Reģistrēties</a>
+                <a href="/registration?tab=register" class="btn-primary">Reģistrēties</a>
             @endguest
         </div>
 

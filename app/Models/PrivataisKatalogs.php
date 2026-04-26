@@ -14,6 +14,11 @@ class PrivataisKatalogs extends Model
         return $this->hasMany(PrivataisKatalogsImage::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     protected $fillable = [
         'user_id',
         'brand',

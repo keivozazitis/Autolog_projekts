@@ -27,7 +27,7 @@
                         {{ $ieraksts->brand }} {{ $ieraksts->model }}
                         <span class="listing-card-year">({{ $ieraksts->year }})</span>
                     </h3>
-                    <div class="listing-card-price">€{{ number_format($ieraksts->price, 2) }}</div>
+                    <div class="listing-card-price">€{{ number_format($ieraksts->price, 0) }}</div>
 
                     @if(isset($ieraksts->fuel_type) || isset($ieraksts->mileage))
                     <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
@@ -53,8 +53,7 @@
             </div>
         @empty
             <div class="empty-state" style="grid-column:1/-1;">
-                <p style="color:var(--text-muted); font-size:1rem; margin-bottom:16px;">Tavs katalogs ir tukšs.</p>
-                <a href="{{ route('privatais.create') }}" class="button">Pievienot pirmo auto</a>
+                <p style="color:var(--text-muted); font-size:1rem;">Tavs katalogs ir tukšs.</p>
             </div>
         @endforelse
     </div>

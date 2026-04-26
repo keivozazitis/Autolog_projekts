@@ -5,15 +5,32 @@
 @section('content')
 <section class="hero-section">
     <div class="hero-bg-grid"></div>
+    <div class="hero-corner-glow"></div>
 
     <div class="hero-content">
-        <div class="hero-badge"> Latvijas lielākais auto tirgus</div>
+        <div class="hero-badge">Latvijas automašīnu tirgus</div>
         <h1 class="hero-title">
-            Tavs nākamais<br><span class="accent">auto ir šeit</span>
+            Tavs nākamais<br><span class="hero-title-accent">auto ir šeit</span>
         </h1>
         <p class="hero-subtitle">
             Pārdod ātri. Pērc droši. Viss vienā vietā.
         </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <span class="hero-stat-number">{{ number_format($listingCount) }}</span>
+                <span class="hero-stat-label">Sludinājumi</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+                <span class="hero-stat-number">{{ $todayCount }}</span>
+                <span class="hero-stat-label">Šodienas sludinājumi</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+                <span class="hero-stat-number">{{ $brandCount }}</span>
+                <span class="hero-stat-label">Markas</span>
+            </div>
+        </div>
     </div>
 
     {{-- ── Ātrā meklēšana ── --}}

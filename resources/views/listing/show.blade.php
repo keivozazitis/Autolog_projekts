@@ -40,13 +40,15 @@ document.addEventListener('keydown', e => {
 @section('content')
 <div class="listing-detail">
 
+    <a href="{{ route('listing.index') }}" class="back-button" style="display:inline-flex; margin-bottom:16px;">← Atpakaļ uz sludinājumiem</a>
+
     {{-- ── Header ── --}}
     <div class="listing-detail-header">
         <h1 class="listing-title">
             {{ $listing->brand }} {{ $listing->model }}
             <span style="font-weight:400; color: var(--text-secondary);">({{ $listing->year }})</span>
         </h1>
-        <div class="price-tag">€{{ number_format($listing->price, 2) }}</div>
+        <div class="price-tag">€{{ number_format($listing->price, 0) }}</div>
     </div>
 
     <div style="margin-bottom:20px; display:flex; align-items:center; flex-wrap:wrap; gap:16px;">
@@ -68,6 +70,14 @@ document.addEventListener('keydown', e => {
             &#128222; {{ $listing->phone }}
         </a>
         @endif
+        @auth
+            @if($listing->user_id !== Auth::id())
+            <a href="{{ route('messages.conversation', ['user' => $listing->user_id, 'listing' => $listing->id]) }}"
+               class="button btn-secondary btn-sm">
+                ✉ Sazināties
+            </a>
+            @endif
+        @endauth
     </div>
 
     {{-- ── Pamatinformācija ── --}}

@@ -42,7 +42,16 @@ class PrivataisKatalogsController extends Controller
             'images.*' => ['nullable', 'image', 'max:65536'],
         ]);
 
-        $validated['user_id'] = Auth::id();
+        $user = Auth::user();
+        if (!$user->subscribed('default')) {
+            $count = PrivataisKatalogs::where('user_id', $user->id)->count();
+            if ($count >= 1) {
+                return redirect()->route('subscription.upgrade')
+                    ->with('limit', 'Bezmaksas kontam ir 1 ieraksta limits privātajā katalogā. Jaunina uz AutoPlacis!');
+            }
+        }
+
+        $validated['user_id'] = $user->id;
 
         $ieraksts = PrivataisKatalogs::create(array_merge($validated, $request->only([
             'body_type', 'fuel_type', 'transmission', 'engine_volume',

@@ -37,6 +37,47 @@
 
         <div class="profile-divider"></div>
 
+        {{-- Abonements --}}
+        <div style="width:100%; text-align:left;">
+            <p style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px;">Abonements</p>
+            @if(Auth::user()->subscribed('default'))
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                    <div>
+                        <span style="display:inline-flex; align-items:center; gap:6px; background:rgba(201,167,112,0.1); border:1px solid rgba(201,167,112,0.3); color:var(--accent); font-size:0.78rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:4px 12px; border-radius:999px;">
+                            ★ AutoPlacis aktīvs
+                        </span>
+                        @if(Auth::user()->subscription('default')->onGracePeriod())
+                            <p style="font-size:0.78rem; color:var(--text-muted); margin-top:6px;">Beigsies {{ Auth::user()->subscription('default')->ends_at->format('d.m.Y') }}</p>
+                        @endif
+                    </div>
+                    <form method="POST" action="{{ route('subscription.cancel') }}" onsubmit="return confirm('Vai tiešām vēlies atcelt abonementu?');">
+                        @csrf
+                        <button type="submit" class="button btn-secondary btn-sm">Atcelt</button>
+                    </form>
+                </div>
+            @else
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px;">
+                    <div style="padding:12px; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-sm);">
+                        <p style="font-size:0.7rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin:0 0 8px;">Bezmaksas</p>
+                        <p style="font-size:0.8rem; color:var(--text-secondary); margin:0 0 4px;">✓ 1 sludinājums</p>
+                        <p style="font-size:0.8rem; color:var(--text-secondary); margin:0 0 4px;">✓ 1 privātajā katalogā</p>
+                        <p style="font-size:0.8rem; color:var(--text-secondary); margin:0;">✓ Čats</p>
+                    </div>
+                    <div style="padding:12px; background:rgba(201,167,112,0.06); border:1px solid rgba(201,167,112,0.2); border-radius:var(--radius-sm);">
+                        <p style="font-size:0.7rem; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:0.06em; margin:0 0 8px;">AutoPlacis</p>
+                        <p style="font-size:0.8rem; color:var(--text-secondary); margin:0 0 4px;">✓ Neierobežoti sludinājumi</p>
+                        <p style="font-size:0.8rem; color:var(--text-secondary); margin:0 0 4px;">✓ Neierobežots katalogs</p>
+                        <p style="font-size:0.8rem; color:var(--text-secondary); margin:0;">✓ Čats</p>
+                    </div>
+                </div>
+                <a href="{{ route('subscription.upgrade') }}" class="button" style="display:block; text-align:center;">
+                    Jaunināt uz AutoPlacis — €30/mēn
+                </a>
+            @endif
+        </div>
+
+        <div class="profile-divider"></div>
+
         <div class="danger-zone">
             <p class="danger-zone-title">Bīstamā zona</p>
             <p class="danger-zone-desc">
@@ -80,7 +121,7 @@
                         {{ $listing->brand }} {{ $listing->model }}
                         <span class="listing-card-year">({{ $listing->year }})</span>
                     </h3>
-                    <div class="listing-card-price">€{{ number_format($listing->price, 2) }}</div>
+                    <div class="listing-card-price">€{{ number_format($listing->price, 0) }}</div>
                     <div class="listing-card-actions">
                         <a href="{{ route('listing.show', $listing->id) }}">
                             <button type="button" class="button btn-secondary">Apskatīt</button>

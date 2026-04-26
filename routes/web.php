@@ -8,6 +8,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\PrivataisKatalogsController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\MessageController;
 
 Route::view('/auth', 'auth')->name('auth');
 
@@ -61,7 +63,21 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/privatais/{id}/publish', [PrivataisKatalogsController::class, 'publish'])->name('privatais.publish');
 });
 
+Route::post('/stripe/webhook', '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/messages', [MessageController::class, 'inbox'])->name('messages.inbox');
+    Route::get('/messages/{user}', [MessageController::class, 'conversation'])->name('messages.conversation');
+    Route::post('/messages', [MessageController::class, 'send'])->name('messages.send');
+
+    Route::get('/subscription/upgrade', [SubscriptionController::class, 'upgrade'])->name('subscription.upgrade');
+    Route::get('/subscription/checkout', [SubscriptionController::class, 'checkout'])->name('subscription.checkout');
+    Route::get('/subscription/success', [SubscriptionController::class, 'success'])->name('subscription.success');
+    Route::post('/subscription/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
+});
+
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('index');
     Route::delete('/listings/{listing}', [AdminController::class, 'destroyListing'])->name('listings.destroy');
+    Route::delete('/users/{user}', [AdminController::class, 'destroyUser'])->name('users.destroy');
 });

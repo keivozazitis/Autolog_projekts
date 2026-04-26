@@ -231,7 +231,7 @@
                         {{ $listing->brand }} {{ $listing->model }}
                         <span class="listing-card-year">({{ $listing->year }})</span>
                     </h3>
-                    <div class="listing-card-price">€{{ number_format($listing->price, 2) }}</div>
+                    <div class="listing-card-price">€{{ number_format($listing->price, 0) }}</div>
                     @if($listing->description)
                         <p class="listing-card-desc">{{ $listing->description }}</p>
                     @endif

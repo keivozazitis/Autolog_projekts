@@ -41,7 +41,7 @@ document.addEventListener('keydown', e => {
             {{ $ieraksts->brand }} {{ $ieraksts->model }}
             <span style="font-weight:400; color: var(--text-secondary);">({{ $ieraksts->year }})</span>
         </h1>
-        <div class="price-tag">€{{ number_format($ieraksts->price, 2) }}</div>
+        <div class="price-tag">€{{ number_format($ieraksts->price, 0) }}</div>
     </div>
 
     {{-- Pamatinformācija --}}
