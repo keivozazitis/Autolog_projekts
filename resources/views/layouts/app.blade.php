@@ -34,6 +34,11 @@
                     @endif
                 </a>
             @endauth
+            @auth
+                <a href="/profile" class="nav-link nav-link-mobile-only">👤 {{ Auth::user()->name }}</a>
+                <form method="POST" action="{{ route('logout') }}" style="display:none;" id="mobile-logout-form">@csrf</form>
+                <a href="#" class="nav-link nav-link-mobile-only" onclick="document.getElementById('mobile-logout-form').submit()">Iziet</a>
+            @endauth
             @guest
                 <a href="/registration" class="nav-link">Ielogoties</a>
                 <a href="/registration" class="nav-link">Reģistrēties</a>
