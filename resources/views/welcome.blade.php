@@ -5,10 +5,7 @@
 @section('content')
 <section class="hero-section">
     <div class="hero-bg-grid"></div>
-    <div class="hero-corner-glow"></div>
-
     <div class="hero-content">
-        <div class="hero-badge">Latvijas automašīnu tirgus</div>
         <h1 class="hero-title">
             Tavs nākamais<br><span class="hero-title-accent">auto ir šeit</span>
         </h1>
