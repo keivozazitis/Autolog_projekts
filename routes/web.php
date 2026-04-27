@@ -13,7 +13,8 @@ use App\Http\Controllers\MessageController;
 
 Route::view('/auth', 'auth')->name('auth');
 
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::get('/login', fn() => redirect('/registration'))->name('login');
+Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'welcome']);
